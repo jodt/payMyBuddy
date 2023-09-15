@@ -2,6 +2,7 @@ package com.openclassrooms.payMyBuddy.service;
 
 import com.openclassrooms.payMyBuddy.Controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.Controller.mapper.UserMapper;
+import com.openclassrooms.payMyBuddy.exceptions.UserAlreadyExistException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.AccountRepository;
@@ -36,7 +37,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User saveUser(UserDTO user) {
+    public User saveUser(UserDTO user) throws UserAlreadyExistException {
+
+        Optional<User> existingUser = this.userRepository.findByMail(user.getMail());
+
+        if (existingUser.isPresent()) {
+            throw new UserAlreadyExistException("Un compte est déjà associé à cet email");
+        }
         User userToSave = userMapper.asUser(user);
 
         User userSaved = this.userRepository.save(userToSave);
