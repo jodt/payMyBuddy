@@ -2,17 +2,18 @@ package com.openclassrooms.payMyBuddy.Controller.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserDTO {
-
-    private Long id;
 
     @NotEmpty
     private String mail;
@@ -26,6 +27,6 @@ public class UserDTO {
     @NotEmpty
     private String password;
 
-    private List<UserDTO> buddies;
+    private List<String> buddieEmail = new ArrayList<>();
 
 }
