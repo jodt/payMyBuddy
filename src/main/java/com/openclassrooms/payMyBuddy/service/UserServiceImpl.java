@@ -8,9 +8,10 @@ import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.AccountRepository;
 import com.openclassrooms.payMyBuddy.repository.UserRepository;
 import com.openclassrooms.payMyBuddy.utils.RandomAccountNumber;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,16 +19,19 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, AccountRepository accountRepository, UserMapper userMapper) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, AccountRepository accountRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,7 +40,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public User saveUser(UserDTO user) throws UserAlreadyExistException {
 
         Optional<User> existingUser = this.userRepository.findByMail(user.getMail());
@@ -47,6 +50,7 @@ public class UserServiceImpl implements UserService {
         User userToSave = userMapper.asUser(user);
 
         User userSaved = this.userRepository.save(userToSave);
+        userSaved.setPassword(this.passwordEncoder.encode(userSaved.getPassword()));
 
         Account userAccount = Account.builder()
                 .number(RandomAccountNumber.createAccountNumber())
@@ -63,5 +67,11 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findByMail(mail);
     }
 
+    @Override
+    public UserDTO getLoggedUser() {
+        String loggedUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User loggedUser = this.userRepository.findByMail(loggedUserMail).get();
+        return this.userMapper.asUserDTO(loggedUser);
+    }
 
 }

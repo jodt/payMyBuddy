@@ -14,5 +14,7 @@ public interface UserService {
 
     public Optional<User> findByMail(String mail);
 
+    public UserDTO getLoggedUser();
+
 
 }
