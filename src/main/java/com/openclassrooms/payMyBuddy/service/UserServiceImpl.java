@@ -47,10 +47,10 @@ public class UserServiceImpl implements UserService {
         if (existingUser.isPresent()) {
             throw new UserAlreadyExistException("Un compte est déjà associé à cet email");
         }
+        
         User userToSave = userMapper.asUser(user);
-
+        userToSave.setPassword(this.passwordEncoder.encode(userToSave.getPassword()));
         User userSaved = this.userRepository.save(userToSave);
-        userSaved.setPassword(this.passwordEncoder.encode(userSaved.getPassword()));
 
         Account userAccount = Account.builder()
                 .number(RandomAccountNumber.createAccountNumber())
