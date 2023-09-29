@@ -1,14 +1,19 @@
 package com.openclassrooms.payMyBuddy.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account {
 
     @Id
@@ -19,13 +24,8 @@ public class Account {
 
     private double balance;
 
-    @ManyToMany(
-            fetch = FetchType.EAGER
-    )
-    @JoinTable(name = "payment",
-            joinColumns = @JoinColumn(name = "issuer_account_id"),
-            inverseJoinColumns = @JoinColumn(name = "receiver_account_id")
-    )
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "issuer_account_id")
     private List<Payment> payments;
 
     @OneToMany(
