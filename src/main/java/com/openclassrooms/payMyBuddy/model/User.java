@@ -1,13 +1,17 @@
 package com.openclassrooms.payMyBuddy.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class User {
 
@@ -38,6 +42,5 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "buddy_id")
     )
     private List<User> buddies;
-
 
 }
