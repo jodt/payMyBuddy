@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Payment</title>
+</head>
+<section class="d-flex flex-column" style="height:100%;" layout:fragment="content">
+    <div class="h-25 pt-5 d-flex flex-column align-items-center justify-content-center">
+        <div class="w-50">
+            <h3>Envoyer de l'argent</h3>
+        </div>
+        <form action="#" th:action="@{/payment}" method="post" th:object="${payment}"
+              class="card h-50 w-50 bg-secondary bg-opacity-10 d-flex flex-row justify-content-around align-items-center">
+            <div>
+                <select id="receiver" class="form-select" aria-label="Default select example"
+                        th:field="*{receiverMail}">
+                    <option selected th:value=null>Choississez une adresse mail</option>
+                    <option th:each="userMail : ${user.getBuddieEmail()}" th:text="${userMail}"
+                            th:value="${userMail}"
+
+                    >
+                    </option>
+                </select>
+                <div
+                        class="text-danger"
+                        th:errors="*{receiverMail}"
+                ></div>
+            </div>
+            <div>
+                <input
+                        placeholder="0€"
+                        type="number"
+                        id="amount"
+                        step="0.01"
+                        style="text-align: right;"
+                        min="0"
+                        th:field="*{amount}"
+                />
+                <div
+                        class="text-danger"
+                        th:errors="*{amount}"
+                ></div>
+            </div>
+            <div class="form-group">
+                <input
+                        placeholder="Description"
+                        type="text"
+                        id="Description"
+                        style="text-align: center;"
+                        th:field="*{description}"
+                />
+                <div
+                        class="text-danger"
+                        th:errors="*{description}"
+                ></div>
+            </div>
+            <button type="submit" class="btn btn-success">Payer</button>
+        </form>
+    </div>
+    <div class="h-50 d-flex flex-column align-items-center justify-content-center">
+        <div class="w-50">
+            <h3>Mes paiements</h3>
+        </div>
+        <div class="h-75 w-50 d-flex flex-row justify-content-around align-items-center">
+            <table class="table caption-top table-striped border border-dark">
+                <thead class="bg-success bg-opacity-20" style="text-align:center;">
+                <tr style="height:80px; vertical-align: middle;">
+                    <th class="text-white" scope="col">Connections</th>
+                    <th class="text-white" scope="col">Descriptions</th>
+                    <th class="text-white" scope="col">Amount</th>
+                </tr>
+                </thead>
+                <tbody style="text-align:center;">
+                <tr th:each="payment : ${payments}">
+                    <th scope="row" th:text="${payment.receiverMail}"></th>
+                    <td th:text="${payment.description}"></td>
+                    <td th:text="${payment.amount}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <ul class="nav nav-pills">
+            <li th:each="page, status : ${pages}">
+                <a th:href="@{/payment(page=${status.index})}" class="btn btn-outline-success m-2"
+                   th:text="${status.index + 1}"></a>
+            </li>
+        </ul>
+    </div>
+</section>
+</html>
