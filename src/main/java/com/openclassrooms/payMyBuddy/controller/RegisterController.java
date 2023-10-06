@@ -1,6 +1,6 @@
-package com.openclassrooms.payMyBuddy.Controller;
+package com.openclassrooms.payMyBuddy.controller;
 
-import com.openclassrooms.payMyBuddy.Controller.dto.UserDTO;
+import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.exceptions.UserAlreadyExistException;
 import com.openclassrooms.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;

@@ -1,7 +1,7 @@
-package com.openclassrooms.payMyBuddy.Controller;
+package com.openclassrooms.payMyBuddy.controller;
 
-import com.openclassrooms.payMyBuddy.Controller.dto.AccountDTO;
-import com.openclassrooms.payMyBuddy.Controller.mapper.AccountMapper;
+import com.openclassrooms.payMyBuddy.controller.dto.AccountDTO;
+import com.openclassrooms.payMyBuddy.controller.mapper.AccountMapper;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.service.AccountService;
 import org.springframework.stereotype.Controller;

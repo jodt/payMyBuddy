@@ -1,4 +1,4 @@
-package com.openclassrooms.payMyBuddy.Controller.dto;
+package com.openclassrooms.payMyBuddy.controller.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

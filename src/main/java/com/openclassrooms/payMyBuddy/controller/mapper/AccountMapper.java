@@ -1,10 +1,10 @@
-package com.openclassrooms.payMyBuddy.Controller.mapper;
+package com.openclassrooms.payMyBuddy.controller.mapper;
 
-import com.openclassrooms.payMyBuddy.Controller.dto.AccountDTO;
+import com.openclassrooms.payMyBuddy.controller.dto.AccountDTO;
 import com.openclassrooms.payMyBuddy.model.Account;
 
 public interface AccountMapper {
 
-    public AccountDTO asAccountDTO(Account account);
+    AccountDTO asAccountDTO(Account account);
 
 }

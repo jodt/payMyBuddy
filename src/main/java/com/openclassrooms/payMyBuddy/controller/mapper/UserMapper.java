@@ -1,15 +1,13 @@
-package com.openclassrooms.payMyBuddy.Controller.mapper;
+package com.openclassrooms.payMyBuddy.controller.mapper;
 
-import com.openclassrooms.payMyBuddy.Controller.dto.AccountDTO;
-import com.openclassrooms.payMyBuddy.Controller.dto.UserDTO;
-import com.openclassrooms.payMyBuddy.model.Account;
+import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.model.User;
 
 public interface UserMapper {
 
-    public User asUser(UserDTO userDTO);
+    User asUser(UserDTO userDTO);
 
-    public UserDTO asUserDTO(User user);
+    UserDTO asUserDTO(User user);
 
 
 }

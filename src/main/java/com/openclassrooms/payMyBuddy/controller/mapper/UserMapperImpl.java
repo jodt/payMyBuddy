@@ -1,8 +1,7 @@
-package com.openclassrooms.payMyBuddy.Controller.mapper;
+package com.openclassrooms.payMyBuddy.controller.mapper;
 
-import com.openclassrooms.payMyBuddy.Controller.dto.UserDTO;
+import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.model.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
