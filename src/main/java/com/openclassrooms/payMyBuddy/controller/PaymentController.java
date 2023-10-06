@@ -1,13 +1,14 @@
-package com.openclassrooms.payMyBuddy.Controller;
+package com.openclassrooms.payMyBuddy.controller;
 
-import com.openclassrooms.payMyBuddy.Controller.dto.PaymentDTO;
-import com.openclassrooms.payMyBuddy.Controller.dto.UserDTO;
-import com.openclassrooms.payMyBuddy.Controller.mapper.UserMapper;
+import com.openclassrooms.payMyBuddy.controller.dto.PaymentDTO;
+import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
+import com.openclassrooms.payMyBuddy.controller.mapper.UserMapper;
+import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
+import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.service.PaymentService;
 import com.openclassrooms.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -34,45 +35,41 @@ public class PaymentController {
     @GetMapping("/payment")
     public String getPayment(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
                              @RequestParam(name = "size", defaultValue = "3") int size) {
-        UserDTO userDTO = this.userService.getLoggedUser();
+        User user = this.userService.getLoggedUser();
+        UserDTO userDTO = this.userMapper.asUserDTO(user);
         Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
         model.addAttribute("user", userDTO);
         model.addAttribute("payment", new PaymentDTO());
         model.addAttribute("payments", paymentDTOS.getContent());
         model.addAttribute("pages", new int[(paymentDTOS.getTotalPages())]);
+        model.addAttribute("currentPage", page);
         return ("payment");
     }
 
     @PostMapping("/payment")
     public String makePayment(@Valid @ModelAttribute("payment") PaymentDTO paymentDTO, Errors errors, Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                              @RequestParam(name = "size", defaultValue = "3") int size) throws Exception {
+                              @RequestParam(name = "size", defaultValue = "3") int size) {
 
-        UserDTO userDTO = this.userService.getLoggedUser();
+        User user = this.userService.getLoggedUser();
+        UserDTO userDTO = this.userMapper.asUserDTO(user);
 
-        model.addAttribute("user", userDTO);
 
         if (errors.hasErrors()) {
+            Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
+            model.addAttribute("user", userDTO);
+            model.addAttribute("payments", paymentDTOS.getContent());
+            model.addAttribute("pages", new int[(paymentDTOS.getTotalPages())]);
+            model.addAttribute("currentPage", page);
             return ("payment");
         }
-        this.paymentService.makePayment(paymentDTO, userDTO);
-        Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
-        model.addAttribute("payment", new PaymentDTO());
-        model.addAttribute("payments", paymentDTOS.getContent());
-        return ("redirect:payment?success");
+
+        try {
+            this.paymentService.makePayment(paymentDTO, userDTO);
+        } catch (InsufficientBalanceException e) {
+            return ("redirect:payment?balanceError");
+        }
+        System.out.println(page);
+        return ("redirect:/payment?page=" + page + "&success");
     }
-
-    @GetMapping("/payment?success")
-    public String getSuccessPaiement(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                                     @RequestParam(name = "size", defaultValue = "3") int size) {
-        UserDTO userDTO = this.userService.getLoggedUser();
-        Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
-
-        model.addAttribute("user", userDTO);
-        model.addAttribute("payment", new PaymentDTO());
-        model.addAttribute("payments", paymentDTOS.getContent());
-
-        return ("payment");
-    }
-
 
 }
