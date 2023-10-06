@@ -1,20 +1,22 @@
 package com.openclassrooms.payMyBuddy.service;
 
-import com.openclassrooms.payMyBuddy.Controller.dto.UserDTO;
-import com.openclassrooms.payMyBuddy.Controller.mapper.UserMapper;
+import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
+import com.openclassrooms.payMyBuddy.controller.mapper.UserMapper;
+import com.openclassrooms.payMyBuddy.exceptions.AlreadyBuddyExistException;
 import com.openclassrooms.payMyBuddy.exceptions.UserAlreadyExistException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.AccountRepository;
 import com.openclassrooms.payMyBuddy.repository.UserRepository;
 import com.openclassrooms.payMyBuddy.utils.RandomAccountNumber;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,11 +36,15 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+
     @Override
-    public Page<User> findAllUsers() {
-        return this.userRepository.findAll(PageRequest.of(0, 5));
+    public List<User> findAllOtherUsers() {
+        return this.userRepository.findAll().stream()
+                .filter(user -> !user.getMail().equals(this.getLoggedUser().getMail()))
+                .collect(Collectors.toList());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public User saveUser(UserDTO user) throws UserAlreadyExistException {
 
@@ -47,7 +53,7 @@ public class UserServiceImpl implements UserService {
         if (existingUser.isPresent()) {
             throw new UserAlreadyExistException("Un compte est déjà associé à cet email");
         }
-        
+
         User userToSave = userMapper.asUser(user);
         userToSave.setPassword(this.passwordEncoder.encode(userToSave.getPassword()));
         User userSaved = this.userRepository.save(userToSave);
@@ -68,10 +74,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getLoggedUser() {
+    public User getLoggedUser() {
         String loggedUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
-        User loggedUser = this.userRepository.findByMail(loggedUserMail).get();
-        return this.userMapper.asUserDTO(loggedUser);
+        return this.userRepository.findByMail(loggedUserMail).get();
+    }
+
+    @Override
+    public User addBuddy(String buddyMail) throws AlreadyBuddyExistException {
+        User user = this.getLoggedUser();
+        Optional<User> buddytoAdd = this.userRepository.findByMail(buddyMail);
+        if (buddytoAdd.isPresent()) {
+            if (checkIfBuddyAlreadyExist(user, buddytoAdd.get())) {
+                throw new AlreadyBuddyExistException("Cet utilisateur fait déjà partie de vos amis");
+            }
+            user.getBuddies().add(buddytoAdd.get());
+            this.userRepository.save(user);
+        }
+        return user;
+    }
+
+    private boolean checkIfBuddyAlreadyExist(User user, User Buddy) {
+        return user.getBuddies().contains(Buddy);
     }
 
 }
