@@ -43,8 +43,58 @@
                 <button type="submit" class="btn btn-success m-2">Valider</button>
             </form>
         </div>
+
         <div class="alert alert-danger w-50 mt-2" role="alert" th:if="${param.ibanError}">
             Veuillez renseigner votre iban
+        </div>
+
+        <div class="card w-50 mt-5" th:if="${userBankAccount.getIban()}">
+            <h3 class="card-header">
+                Ajouter de l'argent sur mon compte
+            </h3>
+            <form action="#" th:action="@{/profil/credit}" method="post" th:object="${creditTransfer}"
+                  class="card-body d-flex flex-row justify-content-between align-items-center">
+                <div class="form-group w-50">
+                    <input
+                            placeholder="0€"
+                            type="number"
+                            id="credit"
+                            step="0.01"
+                            style="text-align: right;"
+                            min="0"
+                            th:field="*{amount}"
+                    />
+                    <div
+                            class="text-danger"
+                            th:errors="*{amount}"
+                    ></div>
+                </div>
+                <button type="submit" class="btn btn-success m-2">Valider</button>
+            </form>
+        </div>
+        <div class="card w-50 mt-5" th:if="${userBankAccount.getIban()}">
+            <h3 class="card-header">
+                Transférer de l'argent vers mon compte bancaire
+            </h3>
+            <form action="#" th:action="@{/profil/debit}" method="post" th:object="${debitTransfer}"
+                  class="card-body d-flex flex-row justify-content-between align-items-center">
+                <div class="form-group w-50">
+                    <input
+                            placeholder="0€"
+                            type="number"
+                            id="debit"
+                            step="0.01"
+                            style="text-align: right;"
+                            min="0"
+                            th:field="*{amount}"
+                    />
+                    <div
+                            class="text-danger"
+                            th:errors="*{amount}"
+                    ></div>
+                </div>
+                <button type="submit" class="btn btn-success m-2">Valider</button>
+            </form>
         </div>
     </div>
 </section>
