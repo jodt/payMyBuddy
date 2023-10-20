@@ -10,6 +10,15 @@
     <title>Home</title>
 </head>
 <div layout:fragment="content" class="h-50 d-flex flex-column align-items-center justify-content-center">
+    <div class="alert alert-success w-50 mt-2" role="alert" th:if="${param.creditsuccess}">
+        Votre compte a été crédité avec succès
+    </div>
+    <div class="alert alert-success w-50 mt-2" role="alert" th:if="${param.debitsuccess}">
+        Votre compte a été crédité avec succès
+    </div>
+    <div class="alert alert-danger w-50 mt-2" role="alert" th:if="${param.debiterror}">
+        Votre solde est insuffisant pour effectuer ce transfert
+    </div>
     <div class="card p-5 h-50 w-50 bg-secondary bg-opacity-10">
         <h1>Mon solde</h1>
         <div class="p-4 d-flex flex-row justify-content-between bg-white">
