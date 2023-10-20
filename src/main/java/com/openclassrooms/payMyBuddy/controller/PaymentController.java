@@ -33,10 +33,9 @@ public class PaymentController {
     }
 
     @GetMapping("/payment")
-    public String getPayment(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                             @RequestParam(name = "size", defaultValue = "3") int size) {
-        User user = this.userService.getLoggedUser();
-        UserDTO userDTO = this.userMapper.asUserDTO(user);
+    public String getPayments(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
+                              @RequestParam(name = "size", defaultValue = "3") int size) {
+        UserDTO userDTO = this.userService.getLoggedUserDTO();
         Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
         model.addAttribute("user", userDTO);
         model.addAttribute("payment", new PaymentDTO());
@@ -50,9 +49,7 @@ public class PaymentController {
     public String makePayment(@Valid @ModelAttribute("payment") PaymentDTO paymentDTO, Errors errors, Model model, @RequestParam(name = "page", defaultValue = "0") int page,
                               @RequestParam(name = "size", defaultValue = "3") int size) {
 
-        User user = this.userService.getLoggedUser();
-        UserDTO userDTO = this.userMapper.asUserDTO(user);
-
+        UserDTO userDTO = this.userService.getLoggedUserDTO();
 
         if (errors.hasErrors()) {
             Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
@@ -62,13 +59,11 @@ public class PaymentController {
             model.addAttribute("currentPage", page);
             return ("payment");
         }
-
         try {
             this.paymentService.makePayment(paymentDTO, userDTO);
         } catch (InsufficientBalanceException e) {
             return ("redirect:payment?balanceError");
         }
-        System.out.println(page);
         return ("redirect:/payment?page=" + page + "&success");
     }
 

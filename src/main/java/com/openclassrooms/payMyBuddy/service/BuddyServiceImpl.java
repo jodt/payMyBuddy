@@ -22,7 +22,7 @@ public class BuddyServiceImpl implements BuddyService {
         this.buddyMapper = buddyMapper;
     }
 
-    public List<BuddyDTO> getAllUsersMailAsBuddyMailsDTO() {
+    public List<BuddyDTO> getAllUsersAsBuddyDTO() {
         return this.userService.findAllOtherUsers().stream()
                 .map(user -> this.buddyMapper.asBuddyDTO(user))
                 .collect(Collectors.toList());

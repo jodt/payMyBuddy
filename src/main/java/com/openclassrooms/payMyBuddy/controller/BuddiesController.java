@@ -28,34 +28,27 @@ public class BuddiesController {
 
     @GetMapping("/buddies")
     public String showAddBuddyForm(Model model) {
-        List<BuddyDTO> buddiesDTO = this.buddyService.getAllUsersMailAsBuddyMailsDTO();
+        List<BuddyDTO> buddiesDTO = this.buddyService.getAllUsersAsBuddyDTO();
         model.addAttribute("users", buddiesDTO);
         model.addAttribute("buddyToAdd", new BuddyDTO());
         return ("buddies");
     }
 
     @PostMapping("/buddies")
-    public String addBuddy(@Valid @ModelAttribute("buddyToAdd") BuddyDTO buddyDTO, Errors errors, Model model) throws AlreadyBuddyExistException {
+    public String addBuddy(@Valid @ModelAttribute("buddyToAdd") BuddyDTO buddyDTO, Errors errors, Model model) {
 
         if (errors.hasErrors()) {
+            List<BuddyDTO> buddiesDTO = this.buddyService.getAllUsersAsBuddyDTO();
+            model.addAttribute("users", buddiesDTO);
             return ("buddies");
         }
         try {
             this.buddyService.addBuddy(buddyDTO.getBuddyEmail());
         } catch (AlreadyBuddyExistException e) {
-            List<BuddyDTO> buddiesDTO = this.buddyService.getAllUsersMailAsBuddyMailsDTO();
-            model.addAttribute("users", buddiesDTO);
-            model.addAttribute("buddyToAdd", new BuddyDTO());
-            model.addAttribute("AlreadyBuddyExistException", e.getMessage());
-            return ("buddies");
+            return ("redirect:buddies?addBuddyFailed");
         }
 
         return ("redirect:payment?buddyAdded");
-    }
-
-    @GetMapping("/buddies/buddyInfos")
-    public String showBuddyInfo() {
-        return ("redirect:buddies");
     }
 
 }

@@ -11,8 +11,8 @@
 </head>
 <section class="d-flex flex-column" style="height:100%;" layout:fragment="content">
     <div class="h-25 pt-5 d-flex flex-column align-items-center justify-content-center">
-        <div class="alert alert-danger w-50 mt-2" role="alert" th:if="${AlreadyBuddyExistException}"
-             th:text="${AlreadyBuddyExistException}">
+        <div class="alert alert-danger w-50" role="alert" th:if="${param.addBuddyFailed}">
+            Cet personne fait dejà partie de vos amis
         </div>
         <div class="w-50 mb-1 d-flex justify-content-between">
             <h3>Ajouter un ami</h3>

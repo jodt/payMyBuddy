@@ -27,7 +27,7 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public String submitRegisterForm(@Valid @ModelAttribute("user") UserDTO user, Errors errors, Model model) throws Exception {
+    public String submitRegisterForm(@Valid @ModelAttribute("user") UserDTO user, Errors errors, Model model) {
 
         if (errors.hasErrors()) {
             return "register";
@@ -38,8 +38,7 @@ public class RegisterController {
                 model.addAttribute("userAlreadyExistError", "Un compte est déjà associé à cet email");
                 return "register";
             }
-
-            return "redirect:/login";
+            return "redirect:login?registerSuccess";
         }
     }
 

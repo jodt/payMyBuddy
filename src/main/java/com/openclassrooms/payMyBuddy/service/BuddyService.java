@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BuddyService {
 
-    public List<BuddyDTO> getAllUsersMailAsBuddyMailsDTO();
+    public List<BuddyDTO> getAllUsersAsBuddyDTO();
 
     public User addBuddy(String mail) throws AlreadyBuddyExistException;
 

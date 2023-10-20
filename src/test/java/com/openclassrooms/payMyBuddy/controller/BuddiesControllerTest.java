@@ -78,14 +78,14 @@ class BuddiesControllerTest {
     @WithMockUser("john@test.com")
     void shouldNotAddBuddyAlreadyBuddyExistException() throws Exception {
 
-        when(this.buddyService.addBuddy(anyString())).thenThrow(AlreadyBuddyExistException.class);
+        when(this.buddyService.addBuddy("john@test.com")).thenThrow(AlreadyBuddyExistException.class);
 
         mockMvc.perform(post("/buddies")
                         .with(csrf())
                         .flashAttr("buddyToAdd", buddyDTO))
-                .andExpect(status().isOk())
-                .andExpect(view().name("buddies"))
-                .andExpect(model().attributeExists("users", "buddyToAdd", "AlreadyBuddyExistException"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("buddies?addBuddyFailed"));
+
 
     }
 
