@@ -32,11 +32,11 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public BankAccountDTO findBankAccountDTOByUserMail(String mail) {
         Optional<BankAccount> userBankAccount = this.findBankAccountByUserMail(mail);
-        if (userBankAccount.isPresent()) {
-            return (this.bankAccountMapper.asBankAccountDTO(userBankAccount.get()));
-        } else {
-            return new BankAccountDTO();
-        }
+
+        return userBankAccount
+                .map(account -> this.bankAccountMapper.asBankAccountDTO(account))
+                .orElse(new BankAccountDTO());
+
     }
 
 
