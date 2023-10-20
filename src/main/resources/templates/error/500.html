@@ -1,12 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Erreur</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}"/>
 </head>
 <body>
-<h3>
-    Nous avons rencontré un problème
-</h3>
+
+<div class="w-100 d-flex flex-row justify-content-center align-items-center" style="height: 100vh;">
+    <div class="col-sm-6">
+        <div class="card">
+            <h1 class="card-header">
+                Nous avons rencontré un problème, veuillez vous reconnecter
+            </h1>
+            <div class="card-body">
+                <a href="/login"> Par ici....</a>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
