@@ -18,6 +18,8 @@ public interface UserService {
 
     public User getLoggedUser();
 
+    public UserDTO getLoggedUserDTO();
+
     public User addBuddy(String buddyMail) throws AlreadyBuddyExistException;
 
 }
