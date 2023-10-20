@@ -80,12 +80,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO getLoggedUserDTO() {
+        return this.userMapper.asUserDTO(this.getLoggedUser());
+    }
+
+    @Override
     public User addBuddy(String buddyMail) throws AlreadyBuddyExistException {
         User user = this.getLoggedUser();
         Optional<User> buddytoAdd = this.userRepository.findByMail(buddyMail);
         if (buddytoAdd.isPresent()) {
             if (checkIfBuddyAlreadyExist(user, buddytoAdd.get())) {
-                throw new AlreadyBuddyExistException("Cet utilisateur fait déjà partie de vos amis");
+                throw new AlreadyBuddyExistException();
             }
             user.getBuddies().add(buddytoAdd.get());
             this.userRepository.save(user);
