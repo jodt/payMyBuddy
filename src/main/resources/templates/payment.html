@@ -9,23 +9,23 @@
     <meta charset="UTF-8"/>
     <title>Payment</title>
 </head>
-<section class="d-flex flex-column" style="height:100%;" layout:fragment="content">
+<section class="container-sm d-flex flex-column" style="height:100%;" layout:fragment="content">
     <div class="h-25 pt-5 d-flex flex-column align-items-center justify-content-center">
-        <div class="alert alert-success w-50 mt-2" role="alert" th:if="${param.buddyAdded}">
+        <div class="alert alert-success w-75 mt-2" role="alert" th:if="${param.buddyAdded}">
             Ami ajouté avec succès
         </div>
-        <div class="alert alert-danger w-50 mt-2" role="alert" th:if="${param.balanceError}">
+        <div class="alert alert-danger w-75 mt-2" role="alert" th:if="${param.balanceError}">
             Solde insuffisant pour effectuer ce paiement
         </div>
-        <div class="alert alert-success w-50 mt-2" role="alert" th:if="${param.success}">
+        <div class="alert alert-success w-75 mt-2" role="alert" th:if="${param.success}">
             Paiment réalisé avec succès
         </div>
-        <div class="w-50 mb-1 d-flex justify-content-between">
+        <div class="w-75 mb-1 d-flex justify-content-between">
             <h3>Envoyer de l'argent</h3>
             <a href="/buddies" class="btn btn-success">Ajouter un ami</a>
         </div>
         <form action="#" th:action="@{/payment(page=${currentPage})}" method="post" th:object="${payment}"
-              class="card h-50 w-50 bg-secondary bg-opacity-10 d-flex flex-row justify-content-around align-items-center">
+              class="card h-50 w-75 bg-secondary bg-opacity-10 d-flex flex-row justify-content-around align-items-center">
             <div>
                 <select id="receiver" class="form-select" aria-label="select to choose payment receiver"
                         th:field="*{receiverMail}">
@@ -73,13 +73,13 @@
         </form>
     </div>
     <div class="h-50 d-flex flex-column align-items-center justify-content-center">
-        <div class="w-50 mb-1">
+        <div class="w-75 mb-1">
             <h3>Mes paiements</h3>
         </div>
-        <div th:if="${payments.size() == 0}" class="alert alert-warning w-50">
+        <div th:if="${payments.size() == 0}" class="alert alert-warning w-75">
             Vous n'avez effectué aucun paiement pour le moment
         </div>
-        <div th:if="${payments.size() != 0}" class="w-50 d-flex flex-row justify-content-around align-items-center">
+        <div th:if="${payments.size() != 0}" class="w-75 d-flex flex-row justify-content-around align-items-center">
             <table class="table caption-top table-striped border border-dark">
                 <thead class="bg-success bg-opacity-20" style="text-align:center;">
                 <tr style="height:80px; vertical-align: middle;">
