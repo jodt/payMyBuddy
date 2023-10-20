@@ -1,4 +1,3 @@
-
 package com.openclassrooms.payMyBuddy.controller.dto;
 
 import jakarta.validation.constraints.NotEmpty;
