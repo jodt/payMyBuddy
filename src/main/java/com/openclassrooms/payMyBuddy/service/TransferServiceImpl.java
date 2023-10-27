@@ -32,6 +32,7 @@ public class TransferServiceImpl implements TransferService {
         this.transferRepository = transferRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Transfer makeCreditTransfer(TransferDTO transferDTO, String mail) {
         Account userAccount = null;
         BankAccount userBankAccount = null;
@@ -43,7 +44,6 @@ public class TransferServiceImpl implements TransferService {
         if (account.isPresent()) {
             userAccount = account.get();
             userAccount.setBalance(userAccount.getBalance() + amountToAdd);
-            this.accountService.saveAccount(userAccount);
         }
 
         Optional<BankAccount> bankAccount = this.bankAccountService.findBankAccountByUserMail(mail);
@@ -56,11 +56,12 @@ public class TransferServiceImpl implements TransferService {
         return transferRepository.save(creditTransfer);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Transfer makeDebitTransfer(TransferDTO transferDTO, String mail) throws InsufficientBalanceException {
         Account userAccount = null;
         BankAccount userBankAccount = null;
         Transfer debitTransfer;
-        
+
         Double amountToWithdraw = transferDTO.getAmount().doubleValue();
 
         Optional<Account> account = this.accountService.findByUserMail(mail);
@@ -69,7 +70,6 @@ public class TransferServiceImpl implements TransferService {
             userAccount = account.get();
             if (userAccount.getBalance() - amountToWithdraw >= 0) {
                 userAccount.setBalance(userAccount.getBalance() - amountToWithdraw);
-                this.accountService.saveAccount(userAccount);
             } else {
                 throw new InsufficientBalanceException("Solde insuffisant pour effectuer le transfer");
             }
