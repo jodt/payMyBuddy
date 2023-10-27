@@ -45,9 +45,10 @@ public class ProfilController {
     }
 
     @PostMapping("/profil")
-    public String saveUserBankAccount(@Valid @ModelAttribute("userBankAccount") BankAccountDTO bankAccountDTO, Errors errors, Model model) {
+    public String saveUserBankAccount(@Valid @ModelAttribute("userBankAccount") BankAccountDTO bankAccountDTO, Errors errors) {
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
         if (errors.hasErrors()) {
+            System.out.println(errors);
             return ("redirect:profil?ibanError");
         }
         this.bankAccountService.save(bankAccountDTO, loggedUser.getMail());
@@ -67,6 +68,7 @@ public class ProfilController {
             model.addAttribute("debitTransfer", new TransferDTO());
             return ("profil");
         }
+
         this.transferService.makeCreditTransfer(transferDTO, loggedUser.getMail());
 
         return ("redirect:../home?creditsuccess");
