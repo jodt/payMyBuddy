@@ -8,6 +8,7 @@ import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.Payment;
 import com.openclassrooms.payMyBuddy.repository.PaymentRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +56,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) {
         Account issuerAccount = this.accountService.findByUserMail(issuerUser.getMail()).get();
-        Page<Payment> payments = this.paymentRepository.findByIssuerAccountId(issuerAccount.getId(), PageRequest.of(page, size));
+        //Page<Payment> payments = this.paymentRepository.findByIssuerAccountId(issuerAccount.getId(), PageRequest.of(page, size));
+        Page<Payment> payments = new PageImpl<>(issuerAccount.getPayments(), PageRequest.of(page, size), issuerAccount.getPayments().size());
         Page<PaymentDTO> paymentDTOS = payments.map(payment -> paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount()));
         return paymentDTOS;
     }
