@@ -39,7 +39,7 @@ public class TransferServiceImpl implements TransferService {
         Transfer creditTransfer;
         Double amountToAdd = transferDTO.getAmount().doubleValue();
 
-        Optional<Account> account = this.accountService.findByUserMail(mail);
+        Optional<Account> account = this.accountService.findAccountByUserMail(mail);
 
         if (account.isPresent()) {
             userAccount = account.get();
@@ -64,7 +64,7 @@ public class TransferServiceImpl implements TransferService {
 
         Double amountToWithdraw = transferDTO.getAmount().doubleValue();
 
-        Optional<Account> account = this.accountService.findByUserMail(mail);
+        Optional<Account> account = this.accountService.findAccountByUserMail(mail);
 
         if (account.isPresent()) {
             userAccount = account.get();
