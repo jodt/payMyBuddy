@@ -55,7 +55,7 @@ class AccountServiceImplTest {
 
         when(this.accountRepository.findByUserMail("john@test.com")).thenReturn(Optional.ofNullable(userAccount));
 
-        Optional<Account> result = this.accountService.findByUserMail("john@test.com");
+        Optional<Account> result = this.accountService.findAccountByUserMail("john@test.com");
 
         assertNotNull(result);
         assertTrue(result.isPresent());
