@@ -25,14 +25,12 @@ public class Transfer {
     private OperationEnum operation;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
     @JoinColumn(name = "bank_account_id")
     private BankAccount bankAccount;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
     @JoinColumn(name = "account_id")
