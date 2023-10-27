@@ -61,7 +61,7 @@ class HomeControllerTest {
                 .balance(new BigDecimal(500))
                 .build();
 
-        when(this.accountService.findByUserMail(anyString())).thenReturn(Optional.of(userAccount));
+        when(this.accountService.findAccountDtoByUserMail("john@test.com")).thenReturn(accountDto);
         when(this.accountMapper.asAccountDTO(userAccount)).thenReturn(accountDto);
 
         this.mockMvc.perform(get("/home"))
