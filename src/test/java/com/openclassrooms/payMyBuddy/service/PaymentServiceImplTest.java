@@ -141,7 +141,7 @@ class PaymentServiceImplTest {
         verify(paymentRepository).save(payment);
         verify(accountService).saveAccount(issuerAccount);
         verify(accountService).saveAccount(receiverAccount);
-        
+
     }
 
     @Test
@@ -174,7 +174,6 @@ class PaymentServiceImplTest {
     void shouldGetAllPayments() {
 
         when(this.accountService.findByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
-        when(this.paymentRepository.findByIssuerAccountId(1, PageRequest.of(0, 3))).thenReturn(new PageImpl<>(List.of(payment)));
         when(this.paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount())).thenReturn(paymentDTO);
 
         Page<PaymentDTO> result = this.paymentService.getAllPayments(userDTO, 0, 3);
@@ -185,7 +184,6 @@ class PaymentServiceImplTest {
         assertEquals(paymentDTO, result.getContent().get(0));
 
         verify(accountService).findByUserMail("john@test.com");
-        verify(paymentRepository).findByIssuerAccountId(1, PageRequest.of(0, 3));
         verify(paymentMapper).asPaymentDTO(payment, payment.getReceiverAccount());
 
     }

@@ -12,10 +12,10 @@ import com.openclassrooms.payMyBuddy.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -110,9 +110,7 @@ class PaymentControllerTest {
     @WithMockUser("john@test.com")
     void shouldGetPayments() throws Exception {
 
-        when(this.userService.getLoggedUser()).thenReturn(user);
-
-        when(this.userMapper.asUserDTO(user)).thenReturn(userDTO);
+        when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
 
         when(this.paymentService.getAllPayments(userDTO, 0, 3)).thenReturn(new PageImpl<>(List.of(paymentDTO)));
 
@@ -127,8 +125,7 @@ class PaymentControllerTest {
                 .andExpect(model().attribute("pages", equalTo(new int[1])))
                 .andExpect(model().attribute("currentPage", equalTo(0)));
 
-        verify(userService).getLoggedUser();
-        verify(userMapper).asUserDTO(user);
+        verify(userService).getLoggedUserDTO();
         verify(paymentService).getAllPayments(userDTO, 0, 3);
 
     }
@@ -138,9 +135,7 @@ class PaymentControllerTest {
     @DisplayName("Should make payment")
     void shouldMakePayment() throws Exception {
 
-        when(this.userService.getLoggedUser()).thenReturn(user);
-
-        when(this.userMapper.asUserDTO(user)).thenReturn(userDTO);
+        when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
 
         when(this.paymentService.makePayment(paymentDTO, userDTO)).thenReturn(payment);
 
@@ -163,9 +158,7 @@ class PaymentControllerTest {
                 .description("remboursement")
                 .build();
 
-        when(this.userService.getLoggedUser()).thenReturn(user);
-
-        when(this.userMapper.asUserDTO(user)).thenReturn(userDTO);
+        when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
 
         when(this.paymentService.getAllPayments(userDTO, 0, 3)).thenReturn(new PageImpl<>(List.of(paymentDTO)));
 
@@ -188,18 +181,15 @@ class PaymentControllerTest {
     @DisplayName("should not make paiement -> insufficiant balance exception")
     void shouldNotMakePaymentInsufficientBalanceException() throws Exception {
 
-        when(this.userService.getLoggedUser()).thenReturn(user);
-
-        when(this.userMapper.asUserDTO(user)).thenReturn(userDTO);
+        when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
 
         when(this.paymentService.getAllPayments(userDTO, 0, 3)).thenReturn(new PageImpl<>(List.of(paymentDTO)));
 
-        when(this.paymentService.makePayment(paymentDTO, userDTO)).thenThrow(InsufficientBalanceException.class);
+        when(this.paymentService.makePayment(ArgumentMatchers.any(PaymentDTO.class), ArgumentMatchers.any(UserDTO.class))).thenThrow(InsufficientBalanceException.class);
 
 
         mockMvc.perform(post("/payment")
                         .with(csrf())
-                        .param("page", "0")
                         .flashAttr("payment", paymentDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("payment?balanceError"));
