@@ -1,15 +1,13 @@
 package com.openclassrooms.payMyBuddy.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@ToString(exclude = {"transfer", "payments"})
 @Builder
 @Entity
 @NoArgsConstructor
@@ -24,15 +22,17 @@ public class Account {
 
     private double balance;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "issuer_account_id")
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "issuerAccount"
+    )
     private List<Payment> payments;
 
     @OneToMany(
             orphanRemoval = true,
-            fetch = FetchType.EAGER
+            fetch = FetchType.EAGER,
+            mappedBy = "account"
     )
-    @JoinColumn(name = "account_id")
     private List<Transfer> transfer;
 
     @OneToOne(
