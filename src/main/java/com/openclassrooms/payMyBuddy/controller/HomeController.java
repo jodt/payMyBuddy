@@ -18,20 +18,13 @@ public class HomeController {
 
     private final AccountService accountService;
 
-    private final AccountMapper accountMapper;
-
     public HomeController(AccountService accountService, AccountMapper accountMapper) {
         this.accountService = accountService;
-        this.accountMapper = accountMapper;
     }
 
     @GetMapping("/home")
     public String showHomePage(Principal principal, Model model) {
-        Optional<Account> account = this.accountService.findByUserMail(principal.getName());
-        AccountDTO userAccount = null;
-        if (account.isPresent()) {
-            userAccount = this.accountMapper.asAccountDTO(account.get());
-        }
+        AccountDTO userAccount = this.accountService.findAccountDtoByUserMail(principal.getName());
         model.addAttribute("date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         model.addAttribute("account", userAccount);
         return ("home");
