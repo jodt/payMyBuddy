@@ -4,7 +4,6 @@ import com.openclassrooms.payMyBuddy.controller.dto.PaymentDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.UserMapper;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
-import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.service.PaymentService;
 import com.openclassrooms.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;
