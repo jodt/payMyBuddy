@@ -9,9 +9,15 @@
     <meta charset="UTF-8"/>
     <title>Payment</title>
 </head>
-<section class="d-flex flex-column" style="height:100%;" layout:fragment="content">
+<section class="container-sm d-flex flex-column vh-100" style="height:100%;" layout:fragment="content">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/home">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mon profil</li>
+        </ol>
+    </nav>
     <div class="h-100 pt-5 d-flex flex-column align-items-center justify-content-start">
-        <div class="card w-50">
+        <div class="card w-75">
             <h3 class="card-header">
                 Mon profil
             </h3>
@@ -22,7 +28,7 @@
             </ul>
         </div>
 
-        <div class="card w-50 mt-5">
+        <div class="card w-75 mt-5">
             <h3 class="card-header">
                 Mon releve d'identite bancaire
             </h3>
@@ -48,7 +54,7 @@
             Veuillez renseigner votre iban
         </div>
 
-        <div class="card w-50 mt-5" th:if="${userBankAccount.getIban()}">
+        <div class="card w-75 mt-5" th:if="${userBankAccount.getIban()}">
             <h3 class="card-header">
                 Ajouter de l'argent sur mon compte
             </h3>
@@ -72,7 +78,7 @@
                 <button type="submit" class="btn btn-success m-2">Valider</button>
             </form>
         </div>
-        <div class="card w-50 mt-5" th:if="${userBankAccount.getIban()}">
+        <div class="card w-75 mt-5" th:if="${userBankAccount.getIban()}">
             <h3 class="card-header">
                 Transférer de l'argent vers mon compte bancaire
             </h3>
