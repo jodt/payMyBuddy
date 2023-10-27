@@ -3,7 +3,6 @@ package com.openclassrooms.payMyBuddy.service;
 import com.openclassrooms.payMyBuddy.controller.dto.PaymentDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.PaymentMapper;
-import com.openclassrooms.payMyBuddy.controller.mapper.PaymentMapperImpl;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.Payment;
@@ -18,11 +17,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -119,8 +114,8 @@ class PaymentServiceImplTest {
     @DisplayName("Should make payment")
     void shouldMakePayment() throws InsufficientBalanceException {
 
-        when(this.accountService.findByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
-        when(this.accountService.findByUserMail("receiver@gmail.com")).thenReturn(Optional.of(receiverAccount));
+        when(this.accountService.findAccountByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
+        when(this.accountService.findAccountByUserMail("receiver@gmail.com")).thenReturn(Optional.of(receiverAccount));
 
         when(this.paymentMapper.asPayment(paymentDTO, issuerAccount, receiverAccount)).thenReturn(payment);
         when(this.paymentRepository.save(payment)).thenReturn(payment);
@@ -135,8 +130,8 @@ class PaymentServiceImplTest {
         assertNotNull(result);
         assertEquals(payment, result);
 
-        verify(accountService).findByUserMail("john@test.com");
-        verify(accountService).findByUserMail("receiver@gmail.com");
+        verify(accountService).findAccountByUserMail("john@test.com");
+        verify(accountService).findAccountByUserMail("receiver@gmail.com");
         verify(paymentMapper).asPayment(paymentDTO, issuerAccount, receiverAccount);
         verify(paymentRepository).save(payment);
         verify(accountService).saveAccount(issuerAccount);
@@ -154,13 +149,13 @@ class PaymentServiceImplTest {
                 .receiverMail("receiver@gmail.com")
                 .build();
 
-        when(this.accountService.findByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
-        when(this.accountService.findByUserMail("receiver@gmail.com")).thenReturn(Optional.of(receiverAccount));
+        when(this.accountService.findAccountByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
+        when(this.accountService.findAccountByUserMail("receiver@gmail.com")).thenReturn(Optional.of(receiverAccount));
 
         assertThrows(InsufficientBalanceException.class, () -> this.paymentService.makePayment(paymentTooHigh, userDTO));
 
-        verify(accountService).findByUserMail("john@test.com");
-        verify(accountService).findByUserMail("receiver@gmail.com");
+        verify(accountService).findAccountByUserMail("john@test.com");
+        verify(accountService).findAccountByUserMail("receiver@gmail.com");
         verify(accountService, never()).saveAccount(issuerAccount);
         verify(accountService, never()).saveAccount(receiverAccount);
         verify(paymentMapper, never()).asPayment(paymentTooHigh, issuerAccount, receiverAccount);
@@ -173,7 +168,7 @@ class PaymentServiceImplTest {
     @DisplayName("Should get all payments")
     void shouldGetAllPayments() {
 
-        when(this.accountService.findByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
+        when(this.accountService.findAccountByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
         when(this.paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount())).thenReturn(paymentDTO);
 
         Page<PaymentDTO> result = this.paymentService.getAllPayments(userDTO, 0, 3);
@@ -183,7 +178,7 @@ class PaymentServiceImplTest {
         assertEquals(1, result.getTotalPages());
         assertEquals(paymentDTO, result.getContent().get(0));
 
-        verify(accountService).findByUserMail("john@test.com");
+        verify(accountService).findAccountByUserMail("john@test.com");
         verify(paymentMapper).asPaymentDTO(payment, payment.getReceiverAccount());
 
     }
