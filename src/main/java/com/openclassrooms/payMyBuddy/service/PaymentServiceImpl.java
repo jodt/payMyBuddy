@@ -32,8 +32,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException {
-        Account issuerAccount = this.accountService.findByUserMail(issuerUser.getMail()).get();
-        Account receiverAccount = this.accountService.findByUserMail(payment.getReceiverMail()).get();
+        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
+        Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).get();
 
         double amountPayment = payment.getAmount().doubleValue();
         double charges = this.chargesCalulation(amountPayment);
@@ -55,7 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) {
-        Account issuerAccount = this.accountService.findByUserMail(issuerUser.getMail()).get();
+        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
         //Page<Payment> payments = this.paymentRepository.findByIssuerAccountId(issuerAccount.getId(), PageRequest.of(page, size));
         Page<Payment> payments = new PageImpl<>(issuerAccount.getPayments(), PageRequest.of(page, size), issuerAccount.getPayments().size());
         Page<PaymentDTO> paymentDTOS = payments.map(payment -> paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount()));
