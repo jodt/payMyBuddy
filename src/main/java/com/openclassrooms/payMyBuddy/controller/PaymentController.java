@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,22 +45,29 @@ public class PaymentController {
         model.addAttribute("payments", paymentDTOS.getContent());
         model.addAttribute("pages", new int[(paymentDTOS.getTotalPages())]);
         model.addAttribute("currentPage", page);
-        log.info("payement page displayed");
+        log.info("payment page displayed");
         return ("payment");
     }
 
     @PostMapping("/payment")
     public String makePayment(@Valid @ModelAttribute("payment") PaymentDTO paymentDTO, Errors errors, Model model, @RequestParam(name = "page", defaultValue = "0") int page,
                               @RequestParam(name = "size", defaultValue = "3") int size) {
+        log.info("POST /payment called to make a payment");
 
         UserDTO userDTO = this.userService.getLoggedUserDTO();
 
         if (errors.hasErrors()) {
+
+            for (FieldError fieldError : errors.getFieldErrors()) {
+                log.info("Errors in form validation on field {}", fieldError.getField());
+            }
+
             Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
             model.addAttribute("user", userDTO);
             model.addAttribute("payments", paymentDTOS.getContent());
             model.addAttribute("pages", new int[(paymentDTOS.getTotalPages())]);
             model.addAttribute("currentPage", page);
+            log.info("payment page displayed");
             return ("payment");
         }
         try {
@@ -67,6 +75,7 @@ public class PaymentController {
         } catch (InsufficientBalanceException e) {
             return ("redirect:payment?balanceError");
         }
+        log.info("payment completed successfully");
         return ("redirect:/payment?page=" + page + "&success");
     }
 

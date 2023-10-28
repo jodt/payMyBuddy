@@ -39,7 +39,6 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     }
 
-
     @Override
     public BankAccount save(BankAccountDTO bankAccountDTO, String mail) {
         User user = this.userService.findByMail(mail).get();

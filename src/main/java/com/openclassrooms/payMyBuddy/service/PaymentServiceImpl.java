@@ -33,6 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException {
+        log.info("start of the process to make a payment");
         Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
         Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).get();
 
@@ -43,6 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (isBalanceSufficient(issuerAccount.getBalance(), amountWithCharges)) {
             issuerAccount.setBalance(issuerAccount.getBalance() - amountWithCharges);
         } else {
+            log.error("insufficient balance to make payment");
             throw new InsufficientBalanceException("Solde insuffisant pour effectuer le paiement");
         }
         receiverAccount.setBalance(receiverAccount.getBalance() + amountPayment);
@@ -56,10 +58,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) {
-        log.info("Process to recover all user payments begins");
+        log.info("start of the process to recover all user payments begins");
         Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
         Page<Payment> payments = new PageImpl<>(issuerAccount.getPayments(), PageRequest.of(page, size), issuerAccount.getPayments().size());
+        log.info("secovery of the {} payments on page {}", size, page);
         Page<PaymentDTO> paymentDTOS = payments.map(payment -> paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount()));
+        log.info("payments successfully recovered");
         return paymentDTOS;
     }
 
