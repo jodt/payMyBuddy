@@ -41,8 +41,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAllOtherUsers() {
+        String loggedUserMail = this.getLoggedUser().getMail();
+        log.info("recovery of all users other than the connected user {}", loggedUserMail);
         return this.userRepository.findAll().stream()
-                .filter(user -> !user.getMail().equals(this.getLoggedUser().getMail()))
+                .filter(user -> !user.getMail().equals(loggedUserMail))
                 .collect(Collectors.toList());
     }
 
@@ -77,14 +79,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoggedUser() {
-        log.info("Try to find logged user");
+        log.info("try to find logged user");
         String loggedUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userRepository.findByMail(loggedUserMail).get();
     }
 
     @Override
     public UserDTO getLoggedUserDTO() {
-        log.info("Try to retrieve logged userDTO");
+        log.info("try to retrieve logged userDTO");
         return this.userMapper.asUserDTO(this.getLoggedUser());
     }
 
