@@ -7,6 +7,7 @@ import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
 import com.openclassrooms.payMyBuddy.service.PaymentService;
 import com.openclassrooms.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Slf4j
 @Controller
 public class PaymentController {
 
@@ -34,6 +36,7 @@ public class PaymentController {
     @GetMapping("/payment")
     public String getPayments(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
                               @RequestParam(name = "size", defaultValue = "3") int size) {
+        log.info("GET /payment called");
         UserDTO userDTO = this.userService.getLoggedUserDTO();
         Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
         model.addAttribute("user", userDTO);
@@ -41,6 +44,7 @@ public class PaymentController {
         model.addAttribute("payments", paymentDTOS.getContent());
         model.addAttribute("pages", new int[(paymentDTOS.getTotalPages())]);
         model.addAttribute("currentPage", page);
+        log.info("payement page displayed");
         return ("payment");
     }
 

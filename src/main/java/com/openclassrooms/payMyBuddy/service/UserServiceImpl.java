@@ -9,6 +9,7 @@ import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.AccountRepository;
 import com.openclassrooms.payMyBuddy.repository.UserRepository;
 import com.openclassrooms.payMyBuddy.utils.RandomAccountNumber;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -75,12 +77,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoggedUser() {
+        log.info("Try to find logged user");
         String loggedUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userRepository.findByMail(loggedUserMail).get();
     }
 
     @Override
     public UserDTO getLoggedUserDTO() {
+        log.info("Try to retrieve logged userDTO");
         return this.userMapper.asUserDTO(this.getLoggedUser());
     }
 

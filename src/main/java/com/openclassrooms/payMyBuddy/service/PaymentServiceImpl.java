@@ -7,13 +7,14 @@ import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.Payment;
 import com.openclassrooms.payMyBuddy.repository.PaymentRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+@Slf4j
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
@@ -55,8 +56,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) {
+        log.info("Process to recover all user payments begins");
         Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
-        //Page<Payment> payments = this.paymentRepository.findByIssuerAccountId(issuerAccount.getId(), PageRequest.of(page, size));
         Page<Payment> payments = new PageImpl<>(issuerAccount.getPayments(), PageRequest.of(page, size), issuerAccount.getPayments().size());
         Page<PaymentDTO> paymentDTOS = payments.map(payment -> paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount()));
         return paymentDTOS;
