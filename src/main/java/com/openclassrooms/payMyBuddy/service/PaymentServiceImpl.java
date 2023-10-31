@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +61,10 @@ public class PaymentServiceImpl implements PaymentService {
     public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) {
         log.info("start of the process to recover all user payments begins");
         Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
-        Page<Payment> payments = new PageImpl<>(issuerAccount.getPayments(), PageRequest.of(page, size), issuerAccount.getPayments().size());
+        Pageable paging = PageRequest.of(page, size);
+        int start = Math.min((int) paging.getOffset(), issuerAccount.getPayments().size());
+        int end = Math.min((start + paging.getPageSize()), issuerAccount.getPayments().size());
+        Page<Payment> payments = new PageImpl<>(issuerAccount.getPayments().subList(start, end), paging, issuerAccount.getPayments().size());
         log.info("secovery of the {} payments on page {}", size, page);
         Page<PaymentDTO> paymentDTOS = payments.map(payment -> paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount()));
         log.info("payments successfully recovered");
