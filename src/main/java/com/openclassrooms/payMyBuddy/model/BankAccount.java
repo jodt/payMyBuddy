@@ -1,12 +1,12 @@
 package com.openclassrooms.payMyBuddy.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 @Data
+@ToString(exclude = "transfer")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +19,13 @@ public class BankAccount {
     private int id;
 
     private String iban;
+
+    @OneToMany(
+            orphanRemoval = true,
+            fetch = FetchType.EAGER,
+            mappedBy = "bankAccount"
+    )
+    private List<Transfer> transfer;
 
     @OneToOne(
             orphanRemoval = true,
