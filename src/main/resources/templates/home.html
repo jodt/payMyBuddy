@@ -25,6 +25,9 @@
         <div class="alert alert-danger mt-2" role="alert" th:if="${param.debiterror}">
             Votre solde est insuffisant pour effectuer ce transfert
         </div>
+        <div class="alert alert-warning mt-2" role="alert" th:if="${account.balance == 0}">
+            Votre pouvez créditer votre compte depuis la page <a href="/profil">"Mon Profil"</a>
+        </div>
     </div>
     <div class="col h-100">
         <div class="card h-25">
