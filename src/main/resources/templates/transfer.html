@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Payment</title>
+</head>
+<section class="container-sm d-flex flex-column vh-100" style="height:100%;" layout:fragment="content">
+
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/home">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Transfert</li>
+        </ol>
+    </nav>
+
+    <div class="h-100 pt-5 d-flex flex-column align-items-center justify-content-start">
+        <div class="card w-75 mt-5">
+            <h3 class="card-header">
+                Ajouter de l'argent sur mon compte
+            </h3>
+            <form action="#" th:action="@{/transfer/credit}" method="post" th:object="${creditTransfer}"
+                  class="card-body d-flex flex-row justify-content-between align-items-center">
+                <div class="form-group w-50">
+                    <input
+                            placeholder="0€"
+                            type="number"
+                            id="credit"
+                            step="0.01"
+                            style="text-align: right;"
+                            min="0"
+                            th:field="*{amount}"
+                    />
+                    <div
+                            class="text-danger"
+                            th:errors="*{amount}"
+                    ></div>
+                </div>
+                <button type="submit" class="btn btn-success m-2">Valider</button>
+            </form>
+        </div>
+        <div class="card w-75 mt-5">
+            <h3 class="card-header">
+                Transférer de l'argent vers mon compte bancaire
+            </h3>
+            <form action="#" th:action="@{/transfer/debit}" method="post" th:object="${debitTransfer}"
+                  class="card-body d-flex flex-row justify-content-between align-items-center">
+                <div class="form-group w-50">
+                    <input
+                            placeholder="0€"
+                            type="number"
+                            id="debit"
+                            step="0.01"
+                            style="text-align: right;"
+                            min="0"
+                            th:field="*{amount}"
+                    />
+                    <div
+                            class="text-danger"
+                            th:errors="*{amount}"
+                    ></div>
+                </div>
+                <button type="submit" class="btn btn-success m-2">Valider</button>
+            </form>
+        </div>
+    </div>
+</section>
+</html>
