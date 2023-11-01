@@ -25,8 +25,9 @@
         <div class="alert alert-danger mt-2" role="alert" th:if="${param.debiterror}">
             Votre solde est insuffisant pour effectuer ce transfert
         </div>
-        <div class="alert alert-warning mt-2" role="alert" th:if="${account.balance == 0}">
-            Votre pouvez créditer votre compte depuis la page <a href="/profil">"Mon Profil"</a>
+        <div class="alert alert-warning mt-2" role="alert" th:if="${bankAccount.iban == null}">
+            Veuillez enregistrer votre IBAN depuis la page <a href="/profil">"Mon Profil"</a> avant de créditer vorte
+            compte
         </div>
     </div>
     <div class="col h-100">
@@ -37,6 +38,9 @@
                 <span class="fs-5" th:text="${account != null ? account.balance + ' Euros' : 'Pas de compte'}"></span>
             </div>
         </div>
+        <a class="btn btn-success mt-5" th:href="${bankAccount.iban == null} ? '' : '/transfer'"> Créditer / Débiter
+            votre
+            compte</a>
     </div>
 </div>
 </html>
