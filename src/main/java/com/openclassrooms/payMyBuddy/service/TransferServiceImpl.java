@@ -11,11 +11,13 @@ import com.openclassrooms.payMyBuddy.model.OperationEnum;
 import com.openclassrooms.payMyBuddy.model.Transfer;
 import com.openclassrooms.payMyBuddy.repository.TransferRepository;
 import javassist.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Transactional
 @Service
 public class TransferServiceImpl implements TransferService {
@@ -45,21 +47,27 @@ public class TransferServiceImpl implements TransferService {
         Optional<Account> account = this.accountService.findAccountByUserMail(mail);
 
         if (account.isPresent()) {
+            log.info("user account recovery");
             userAccount = account.get();
             userAccount.setBalance(userAccount.getBalance() + amountToAdd);
+            log.info("account successfully credited in the amount of {}", amountToAdd);
         } else {
+            log.error("user account not found");
             throw new UserAccountNotFoundException();
         }
 
         Optional<BankAccount> bankAccount = this.bankAccountService.findBankAccountByUserMail(mail);
         if (bankAccount.isPresent()) {
+            log.info("user's bank account recovery");
             userBankAccount = bankAccount.get();
         } else {
+            log.error("user's bank account not found");
             throw new UserBankAccountNotFoundException();
         }
 
         creditTransfer = this.transferMapper.asTransfer(transferDTO, userBankAccount, OperationEnum.CREDIT, userAccount);
 
+        log.info("credit transfer carried out successfully");
         return transferRepository.save(creditTransfer);
     }
 

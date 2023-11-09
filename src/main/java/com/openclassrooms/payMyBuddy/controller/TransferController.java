@@ -56,7 +56,7 @@ public class TransferController {
         }
 
         this.transferService.makeCreditTransfer(transferDTO, loggedUser.getMail());
-
+        log.info("End of the credit transfer process");
         return ("redirect:../home?creditsuccess");
     }
 
