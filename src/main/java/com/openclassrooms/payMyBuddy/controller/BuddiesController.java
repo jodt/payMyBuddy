@@ -6,6 +6,7 @@ import com.openclassrooms.payMyBuddy.exceptions.AlreadyBuddyExistException;
 import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.service.BuddyService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 public class BuddiesController {
 
@@ -29,16 +31,19 @@ public class BuddiesController {
 
     @GetMapping("/buddies")
     public String showAddBuddyForm(Model model) throws UserNotFoundException {
+        log.info("GET /buddies called");
         List<BuddyDTO> buddiesDTO = this.buddyService.getAllUsersAsBuddyDTO();
         model.addAttribute("users", buddiesDTO);
         model.addAttribute("buddyToAdd", new BuddyDTO());
+        log.info("Buddies page displayed");
         return ("buddies");
     }
 
     @PostMapping("/buddies")
     public String addBuddy(@Valid @ModelAttribute("buddyToAdd") BuddyDTO buddyDTO, Errors errors, Model model) throws UserNotFoundException {
-
+        log.info("POST /buddies called -> start of the process to add a buddy");
         if (errors.hasErrors()) {
+            log.info("Errors in form validation on field {}", errors.getFieldError().getField());
             List<BuddyDTO> buddiesDTO = this.buddyService.getAllUsersAsBuddyDTO();
             model.addAttribute("users", buddiesDTO);
             return ("buddies");

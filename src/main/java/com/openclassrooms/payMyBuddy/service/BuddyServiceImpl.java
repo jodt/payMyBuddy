@@ -5,6 +5,7 @@ import com.openclassrooms.payMyBuddy.controller.mapper.BuddyMapper;
 import com.openclassrooms.payMyBuddy.exceptions.AlreadyBuddyExistException;
 import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

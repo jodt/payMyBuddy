@@ -27,7 +27,7 @@ public class PaymentMapperImpl implements PaymentMapper {
 
     @Override
     public PaymentDTO asPaymentDTO(Payment payment, Account receiverEmail) {
-        log.info("map payment to paymentDto");
+        log.info("Map payment to paymentDto");
         PaymentDTO paymentDTO = PaymentDTO.builder()
                 .amount(new BigDecimal(payment.getAmount()).setScale(2, RoundingMode.HALF_DOWN))
                 .receiverMail(receiverEmail.getUser().getMail())

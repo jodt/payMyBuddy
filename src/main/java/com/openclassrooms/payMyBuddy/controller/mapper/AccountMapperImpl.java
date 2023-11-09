@@ -14,7 +14,7 @@ public class AccountMapperImpl implements AccountMapper {
 
     @Override
     public AccountDTO asAccountDTO(Account account) {
-        log.info("map account to accountDTO");
+        log.info("Map account to accountDTO");
         return AccountDTO.builder()
                 .balance(new BigDecimal(account.getBalance()).setScale(2, RoundingMode.HALF_DOWN))
                 .build();

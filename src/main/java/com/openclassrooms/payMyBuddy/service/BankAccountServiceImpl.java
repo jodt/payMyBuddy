@@ -5,10 +5,12 @@ import com.openclassrooms.payMyBuddy.controller.mapper.BankAccountMapper;
 import com.openclassrooms.payMyBuddy.model.BankAccount;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.BankAccountRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
 
@@ -43,6 +45,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     public BankAccount save(BankAccountDTO bankAccountDTO, String mail) {
         User user = this.userService.findByMail(mail).get();
         BankAccount userBankAccount = this.bankAccountMapper.asBankAccount(bankAccountDTO, user);
+        log.info("User bank account successfully created");
         return this.bankAccountRepository.save(userBankAccount);
     }
 

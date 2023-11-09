@@ -23,7 +23,7 @@ public class UserMapperImpl implements UserMapper {
 
     @Override
     public UserDTO asUserDTO(User user) {
-        log.info("map user to userDTO");
+        log.info("Map user to userDTO");
         return UserDTO.builder()
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())

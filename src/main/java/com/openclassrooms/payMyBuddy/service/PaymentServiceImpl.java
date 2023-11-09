@@ -35,7 +35,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException, UserAccountNotFoundException {
-        log.info("start of the process to make a payment");
+        log.info("Start of the process to make a payment");
         Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).orElseThrow(() -> new UserAccountNotFoundException());
         Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).orElseThrow(() -> new UserAccountNotFoundException());
 
@@ -46,7 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (isBalanceSufficient(issuerAccount.getBalance(), amountWithCharges)) {
             issuerAccount.setBalance(issuerAccount.getBalance() - amountWithCharges);
         } else {
-            log.error("insufficient balance to make payment");
+            log.error("Insufficient balance to make payment");
             throw new InsufficientBalanceException("Solde insuffisant pour effectuer le paiement");
         }
         receiverAccount.setBalance(receiverAccount.getBalance() + amountPayment);
@@ -60,15 +60,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) {
-        log.info("start of the process to recover all user payments begins");
+        log.info("Start of the process to recover all user payments begins");
         Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
         Pageable paging = PageRequest.of(page, size);
         int start = Math.min((int) paging.getOffset(), issuerAccount.getPayments().size());
         int end = Math.min((start + paging.getPageSize()), issuerAccount.getPayments().size());
         Page<Payment> payments = new PageImpl<>(issuerAccount.getPayments().subList(start, end), paging, issuerAccount.getPayments().size());
-        log.info("secovery of the {} payments on page {}", size, page);
+        log.info("Recovery {} payments and display {} payments per page", issuerAccount.getPayments().size(), size);
         Page<PaymentDTO> paymentDTOS = payments.map(payment -> paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount()));
-        log.info("payments successfully recovered");
+        log.info("Payments successfully recovered");
         return paymentDTOS;
     }
 

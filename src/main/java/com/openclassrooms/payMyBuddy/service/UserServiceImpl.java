@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAllOtherUsers() throws UserNotFoundException {
         String loggedUserMail = this.getLoggedUser().getMail();
-        log.info("recovery of all users other than the connected user {}", loggedUserMail);
+        log.info("Recovery of all users other than the connected user {}", loggedUserMail);
         return this.userRepository.findAll().stream()
                 .filter(user -> !user.getMail().equals(loggedUserMail))
                 .collect(Collectors.toList());
@@ -76,14 +76,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoggedUser() throws UserNotFoundException {
-        log.info("try to find logged user");
+        log.info("Try to find logged user");
         String loggedUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userRepository.findByMail(loggedUserMail).orElseThrow(() -> new UserNotFoundException());
     }
 
     @Override
     public UserDTO getLoggedUserDTO() throws UserNotFoundException {
-        log.info("try to retrieve logged userDTO");
+        log.info("Try to retrieve logged userDTO");
         return this.userMapper.asUserDTO(this.getLoggedUser());
     }
 
@@ -93,10 +93,12 @@ public class UserServiceImpl implements UserService {
         Optional<User> buddytoAdd = this.userRepository.findByMail(buddyMail);
         if (buddytoAdd.isPresent()) {
             if (checkIfBuddyAlreadyExist(user, buddytoAdd.get())) {
+                log.error("Buddy already added");
                 throw new AlreadyBuddyExistException();
             }
             user.getBuddies().add(buddytoAdd.get());
             this.userRepository.save(user);
+            log.info("Buddy successfully added");
         }
         return user;
     }

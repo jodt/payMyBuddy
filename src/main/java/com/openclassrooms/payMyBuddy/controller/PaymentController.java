@@ -47,14 +47,14 @@ public class PaymentController {
         model.addAttribute("payments", paymentDTOS.getContent());
         model.addAttribute("pages", new int[(paymentDTOS.getTotalPages())]);
         model.addAttribute("currentPage", page);
-        log.info("payment page displayed");
+        log.info("Payment page displayed");
         return ("payment");
     }
 
     @PostMapping("/payment")
     public String makePayment(@Valid @ModelAttribute("payment") PaymentDTO paymentDTO, Errors errors, Model model, @RequestParam(name = "page", defaultValue = "0") int page,
                               @RequestParam(name = "size", defaultValue = "3") int size) throws UserNotFoundException, UserAccountNotFoundException {
-        log.info("POST /payment called to make a payment");
+        log.info("POST /payment called -> start of the process to make a payment");
 
         UserDTO userDTO = this.userService.getLoggedUserDTO();
 
@@ -69,7 +69,7 @@ public class PaymentController {
             model.addAttribute("payments", paymentDTOS.getContent());
             model.addAttribute("pages", new int[(paymentDTOS.getTotalPages())]);
             model.addAttribute("currentPage", page);
-            log.info("payment page displayed");
+            log.info("Payment page displayed");
             return ("payment");
         }
         try {
@@ -77,7 +77,7 @@ public class PaymentController {
         } catch (InsufficientBalanceException e) {
             return ("redirect:payment?balanceError");
         }
-        log.info("payment completed successfully");
+        log.info("Payment completed successfully");
         return ("redirect:/payment?page=" + page + "&success");
     }
 
