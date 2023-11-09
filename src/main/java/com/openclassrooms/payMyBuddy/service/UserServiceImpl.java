@@ -62,13 +62,7 @@ public class UserServiceImpl implements UserService {
         userToSave.setPassword(this.passwordEncoder.encode(userToSave.getPassword()));
         User userSaved = this.userRepository.save(userToSave);
 
-        Account userAccount = Account.builder()
-                .number(RandomAccountNumber.createAccountNumber())
-                .balance(0)
-                .user(userSaved)
-                .build();
-
-        this.accountRepository.save(userAccount);
+        this.createUserAccount(userSaved);
         return userSaved;
     }
 
@@ -102,6 +96,17 @@ public class UserServiceImpl implements UserService {
             this.userRepository.save(user);
         }
         return user;
+    }
+
+
+    private void createUserAccount(User userSaved) {
+        Account userAccount = Account.builder()
+                .number(RandomAccountNumber.createAccountNumber())
+                .balance(0)
+                .user(userSaved)
+                .build();
+
+        this.accountRepository.save(userAccount);
     }
 
     private boolean checkIfBuddyAlreadyExist(User user, User Buddy) {
