@@ -4,6 +4,7 @@ import com.openclassrooms.payMyBuddy.controller.dto.PaymentDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.PaymentMapper;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
+import com.openclassrooms.payMyBuddy.exceptions.UserAccountNotFoundException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.Payment;
 import com.openclassrooms.payMyBuddy.repository.PaymentRepository;
@@ -33,10 +34,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException {
+    public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException, UserAccountNotFoundException {
         log.info("start of the process to make a payment");
-        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
-        Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).get();
+        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).orElseThrow(() -> new UserAccountNotFoundException());
+        Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).orElseThrow(() -> new UserAccountNotFoundException());
 
         double amountPayment = payment.getAmount().doubleValue();
         double charges = this.chargesCalulation(amountPayment);

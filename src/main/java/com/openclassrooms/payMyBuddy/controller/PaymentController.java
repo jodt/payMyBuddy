@@ -4,6 +4,7 @@ import com.openclassrooms.payMyBuddy.controller.dto.PaymentDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.UserMapper;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
+import com.openclassrooms.payMyBuddy.exceptions.UserAccountNotFoundException;
 import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.service.PaymentService;
 import com.openclassrooms.payMyBuddy.service.UserService;
@@ -52,7 +53,7 @@ public class PaymentController {
 
     @PostMapping("/payment")
     public String makePayment(@Valid @ModelAttribute("payment") PaymentDTO paymentDTO, Errors errors, Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                              @RequestParam(name = "size", defaultValue = "3") int size) throws UserNotFoundException {
+                              @RequestParam(name = "size", defaultValue = "3") int size) throws UserNotFoundException, UserAccountNotFoundException {
         log.info("POST /payment called to make a payment");
 
         UserDTO userDTO = this.userService.getLoggedUserDTO();
