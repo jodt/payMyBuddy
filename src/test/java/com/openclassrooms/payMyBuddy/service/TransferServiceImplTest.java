@@ -3,6 +3,8 @@ package com.openclassrooms.payMyBuddy.service;
 import com.openclassrooms.payMyBuddy.controller.dto.TransferDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.TransferMapper;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
+import com.openclassrooms.payMyBuddy.exceptions.UserAccountNotFoundException;
+import com.openclassrooms.payMyBuddy.exceptions.UserBankAccountNotFoundException;
 import com.openclassrooms.payMyBuddy.model.*;
 import com.openclassrooms.payMyBuddy.repository.TransferRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +88,7 @@ class TransferServiceImplTest {
 
     @Test
     @DisplayName("Should make transfer and credit account")
-    void shouldMakeCreditTransfer() {
+    void shouldMakeCreditTransfer() throws UserAccountNotFoundException, UserBankAccountNotFoundException {
 
         when(this.accountService.findAccountByUserMail(user.getMail())).thenReturn(Optional.of(account));
         when(this.bankAccountService.findBankAccountByUserMail(user.getMail())).thenReturn(Optional.of(bankAccount));
@@ -108,7 +110,7 @@ class TransferServiceImplTest {
 
     @Test
     @DisplayName("Should make a debit transfer and debit account")
-    void shouldMakeDebitTransfer() throws InsufficientBalanceException {
+    void shouldMakeDebitTransfer() throws InsufficientBalanceException, UserAccountNotFoundException, UserBankAccountNotFoundException {
 
         when(this.accountService.findAccountByUserMail(user.getMail())).thenReturn(Optional.of(account));
         when(this.bankAccountService.findBankAccountByUserMail(user.getMail())).thenReturn(Optional.of(bankAccount));

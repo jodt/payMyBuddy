@@ -4,6 +4,8 @@ import com.openclassrooms.payMyBuddy.controller.dto.BankAccountDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.TransferDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
+import com.openclassrooms.payMyBuddy.exceptions.UserAccountNotFoundException;
+import com.openclassrooms.payMyBuddy.exceptions.UserBankAccountNotFoundException;
 import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.service.BankAccountService;
 import com.openclassrooms.payMyBuddy.service.TransferService;
@@ -43,7 +45,7 @@ public class TransferController {
 
 
     @PostMapping("/transfer/credit")
-    public String creditAccount(@Valid @ModelAttribute("creditTransfer") TransferDTO transferDTO, Errors errors, Model model) throws UserNotFoundException {
+    public String creditAccount(@Valid @ModelAttribute("creditTransfer") TransferDTO transferDTO, Errors errors, Model model) throws UserNotFoundException, UserAccountNotFoundException, UserBankAccountNotFoundException {
         log.info("POST /transfer/credit called -> start of the process to make a credit transfer");
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
 
@@ -59,7 +61,7 @@ public class TransferController {
     }
 
     @PostMapping("/transfer/debit")
-    public String debitAccount(@Valid @ModelAttribute("debitTransfer") TransferDTO transferDTO, Errors errors, Model model) throws UserNotFoundException {
+    public String debitAccount(@Valid @ModelAttribute("debitTransfer") TransferDTO transferDTO, Errors errors, Model model) throws UserNotFoundException, UserAccountNotFoundException, UserBankAccountNotFoundException {
         log.info("POST /transfer/debit called -> start of the process to make a debit transfer");
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
 
