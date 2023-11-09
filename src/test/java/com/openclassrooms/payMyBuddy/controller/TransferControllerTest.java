@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
-@WebMvcTest(controllers = ProfilController.class)
+@WebMvcTest(controllers = TransferController.class)
 class TransferControllerTest {
 
     @Autowired
@@ -44,16 +44,11 @@ class TransferControllerTest {
     UserService userService;
 
     @MockBean
-    BankAccountService bankAccountService;
-
-    @MockBean
     TransferService transferService;
 
     private User user;
 
     private UserDTO userDTO;
-
-    private BankAccountDTO bankAccountDTO;
 
     private TransferDTO transferDTO;
 
@@ -80,10 +75,6 @@ class TransferControllerTest {
                 .password("1234")
                 .build();
 
-        bankAccountDTO = BankAccountDTO.builder()
-                .iban("FR12121212")
-                .build();
-
         transferDTO = TransferDTO.builder()
                 .amount(new BigDecimal("100"))
                 .build();
@@ -93,10 +84,6 @@ class TransferControllerTest {
                 .balance(500)
                 .user(user)
                 .id(1)
-                .build();
-
-        bankAccountDTO = BankAccountDTO.builder()
-                .iban("FR12121212")
                 .build();
 
         transfer = Transfer.builder()
@@ -109,28 +96,20 @@ class TransferControllerTest {
     @Test
     @WithMockUser("john@test.com")
     void showTransferPage() throws Exception {
-        when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
-        when(this.bankAccountService.findBankAccountDTOByUserMail(userDTO.getMail())).thenReturn(bankAccountDTO);
 
-        mockMvc.perform(get("/profil")
+        mockMvc.perform(get("/transfer")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("profil"))
-                .andExpect(model().attribute("userBankAccount", hasProperty("iban", equalTo("FR12121212"))))
-                .andExpect(model().attribute("loggedUser", userDTO));
-
-        verify(this.userService).getLoggedUserDTO();
-        verify(this.bankAccountService).findBankAccountDTOByUserMail(userDTO.getMail());
+                .andExpect(view().name("transfer"))
+                .andExpect(model().attributeExists("debitTransfer", "creditTransfer"));
     }
 
-    @Disabled
     @Test
     @WithMockUser("john@test.com")
-    @DisplayName("Should credit the  account")
+    @DisplayName("Should credit the account")
     void shouldCreditAccount() throws Exception {
 
         when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
-        when(this.bankAccountService.findBankAccountDTOByUserMail(userDTO.getMail())).thenReturn(bankAccountDTO);
         when(this.transferService.makeCreditTransfer(transferDTO, userDTO.getMail())).thenReturn(transfer);
 
         mockMvc.perform(post("/transfer/credit")
@@ -140,11 +119,9 @@ class TransferControllerTest {
                 .andExpect(redirectedUrl("../home?creditsuccess"));
 
         verify(userService).getLoggedUserDTO();
-        verify(bankAccountService).findBankAccountDTOByUserMail(userDTO.getMail());
         verify(transferService).makeCreditTransfer(transferDTO, userDTO.getMail());
     }
 
-    @Disabled
     @Test
     @WithMockUser("john@test.com")
     @DisplayName("Should not credit the account -> credit transfer has error field")
@@ -152,43 +129,37 @@ class TransferControllerTest {
 
 
         when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
-        when(this.bankAccountService.findBankAccountDTOByUserMail(userDTO.getMail())).thenReturn(bankAccountDTO);
 
-        mockMvc.perform(post("/profil/credit")
+        mockMvc.perform(post("/transfer/credit")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("profil"))
-                .andExpect(model().attribute("userBankAccount", bankAccountDTO))
+                .andExpect(view().name("transfer"))
                 .andExpect(model().attributeExists("debitTransfer"))
                 .andExpect(model().attributeHasFieldErrors("creditTransfer", "amount"));
 
         verify(userService).getLoggedUserDTO();
-        verify(bankAccountService).findBankAccountDTOByUserMail(userDTO.getMail());
         verify(transferService, never()).makeCreditTransfer(transferDTO, userDTO.getMail());
     }
 
-    @Disabled
     @Test
     @WithMockUser("john@test.com")
     @DisplayName("Should debit the account")
-    void debitAccount() throws Exception {
+    void shouldDebitAccount() throws Exception {
 
         when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
-        when(this.bankAccountService.findBankAccountDTOByUserMail(userDTO.getMail())).thenReturn(bankAccountDTO);
         when(this.transferService.makeDebitTransfer(transferDTO, userDTO.getMail())).thenReturn(transfer);
 
-        mockMvc.perform(post("/profil/debit")
+        mockMvc.perform(post("/transfer/debit")
                         .with(csrf())
                         .flashAttr("debitTransfer", transferDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("../home?debitsuccess"));
 
         verify(userService).getLoggedUserDTO();
-        verify(bankAccountService).findBankAccountDTOByUserMail(userDTO.getMail());
         verify(transferService).makeDebitTransfer(transferDTO, userDTO.getMail());
     }
 
-    @Disabled
+
     @Test
     @WithMockUser("john@test.com")
     @DisplayName("Should not debit the account -> debit transfer has error field")
@@ -196,22 +167,18 @@ class TransferControllerTest {
 
 
         when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
-        when(this.bankAccountService.findBankAccountDTOByUserMail(userDTO.getMail())).thenReturn(bankAccountDTO);
 
-        mockMvc.perform(post("/profil/debit")
+        mockMvc.perform(post("/transfer/debit")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("profil"))
-                .andExpect(model().attribute("userBankAccount", bankAccountDTO))
+                .andExpect(view().name("transfer"))
                 .andExpect(model().attributeExists("creditTransfer"))
                 .andExpect(model().attributeHasFieldErrors("debitTransfer", "amount"));
 
         verify(userService).getLoggedUserDTO();
-        verify(bankAccountService).findBankAccountDTOByUserMail(userDTO.getMail());
         verify(transferService, never()).makeCreditTransfer(transferDTO, userDTO.getMail());
     }
 
-    @Disabled
     @Test
     @WithMockUser("john@test.com")
     @DisplayName("Should not debit the account -> InsufficientBalanceException")
@@ -219,16 +186,14 @@ class TransferControllerTest {
 
 
         when(this.userService.getLoggedUserDTO()).thenReturn(userDTO);
-        when(this.bankAccountService.findBankAccountDTOByUserMail(userDTO.getMail())).thenReturn(bankAccountDTO);
         when(this.transferService.makeDebitTransfer(transferDTO, userDTO.getMail())).thenThrow(InsufficientBalanceException.class);
 
-        mockMvc.perform(post("/profil/debit")
+        mockMvc.perform(post("/transfer/debit")
                         .with(csrf())
                         .flashAttr("debitTransfer", transferDTO))
                 .andExpect(redirectedUrl("../home?debiterror"));
 
         verify(userService).getLoggedUserDTO();
-        verify(bankAccountService).findBankAccountDTOByUserMail(userDTO.getMail());
         verify(transferService).makeDebitTransfer(transferDTO, userDTO.getMail());
     }
 

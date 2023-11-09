@@ -22,18 +22,15 @@ public class ProfilController {
 
     private final BankAccountService bankAccountService;
 
-    private final TransferService transferService;
 
-
-    public ProfilController(UserService userService, BankAccountService bankAccountService, TransferService transferService) {
+    public ProfilController(UserService userService, BankAccountService bankAccountService) {
         this.userService = userService;
         this.bankAccountService = bankAccountService;
-        this.transferService = transferService;
     }
 
 
     @GetMapping("/profil")
-    public String getProfil(Model model) {
+    public String showProfilePage(Model model) {
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
         BankAccountDTO userBankAccountDTO = this.bankAccountService.findBankAccountDTOByUserMail(loggedUser.getMail());
         model.addAttribute("userBankAccount", userBankAccountDTO);

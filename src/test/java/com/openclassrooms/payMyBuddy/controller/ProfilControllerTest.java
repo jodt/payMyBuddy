@@ -43,9 +43,6 @@ class ProfilControllerTest {
     @MockBean
     BankAccountService bankAccountService;
 
-    @MockBean
-    TransferService transferService;
-
     private User user;
 
     private UserDTO userDTO;
@@ -54,11 +51,6 @@ class ProfilControllerTest {
 
     private BankAccount bankAccount;
 
-    private Account account;
-
-    private TransferDTO transferDTO;
-
-    private Transfer transfer;
 
     @BeforeEach
     void init() {
@@ -76,14 +68,7 @@ class ProfilControllerTest {
                 .mail("john@test.com")
                 .password("1234")
                 .build();
-
-        account = Account.builder()
-                .number("123456789")
-                .balance(500)
-                .user(user)
-                .id(1)
-                .build();
-
+        
         bankAccountDTO = BankAccountDTO.builder()
                 .iban("FR12121212")
                 .build();

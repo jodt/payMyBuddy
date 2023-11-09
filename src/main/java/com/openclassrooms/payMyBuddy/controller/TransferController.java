@@ -22,13 +22,10 @@ public class TransferController {
 
     private final UserService userService;
 
-    private final BankAccountService bankAccountService;
 
-
-    public TransferController(TransferService transferService, UserService userService, BankAccountService bankAccountService) {
+    public TransferController(TransferService transferService, UserService userService) {
         this.transferService = transferService;
         this.userService = userService;
-        this.bankAccountService = bankAccountService;
     }
 
     @GetMapping("/transfer")
@@ -42,7 +39,6 @@ public class TransferController {
     @PostMapping("/transfer/credit")
     public String creditAccount(@Valid @ModelAttribute("creditTransfer") TransferDTO transferDTO, Errors errors, Model model) {
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
-        BankAccountDTO userBankAccountDTO = this.bankAccountService.findBankAccountDTOByUserMail(loggedUser.getMail());
 
         if (errors.hasErrors()) {
             model.addAttribute("debitTransfer", new TransferDTO());
@@ -57,14 +53,12 @@ public class TransferController {
     @PostMapping("/transfer/debit")
     public String debitAccount(@Valid @ModelAttribute("debitTransfer") TransferDTO transferDTO, Errors errors, Model model) {
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
-        BankAccountDTO userBankAccountDTO = this.bankAccountService.findBankAccountDTOByUserMail(loggedUser.getMail());
 
         if (errors.hasErrors()) {
-            if (errors.hasErrors()) {
-                model.addAttribute("creditTransfer", new TransferDTO());
-                return ("transfer");
-            }
+            model.addAttribute("creditTransfer", new TransferDTO());
+            return ("transfer");
         }
+
         try {
             this.transferService.makeDebitTransfer(transferDTO, loggedUser.getMail());
         } catch (InsufficientBalanceException e) {
