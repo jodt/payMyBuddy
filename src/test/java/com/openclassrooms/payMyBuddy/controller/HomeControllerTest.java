@@ -1,10 +1,12 @@
 package com.openclassrooms.payMyBuddy.controller;
 
 import com.openclassrooms.payMyBuddy.controller.dto.AccountDTO;
+import com.openclassrooms.payMyBuddy.controller.dto.BankAccountDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.AccountMapper;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.service.AccountService;
+import com.openclassrooms.payMyBuddy.service.BankAccountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,6 +38,9 @@ class HomeControllerTest {
     AccountService accountService;
 
     @MockBean
+    BankAccountService bankAccountService;
+
+    @MockBean
     AccountMapper accountMapper;
 
     @MockBean
@@ -61,8 +66,13 @@ class HomeControllerTest {
                 .balance(new BigDecimal(500))
                 .build();
 
+        BankAccountDTO bankAccountDTO = BankAccountDTO.builder()
+                .iban("FR12121212")
+                .build();
+
         when(this.accountService.findAccountDtoByUserMail("john@test.com")).thenReturn(accountDto);
         when(this.accountMapper.asAccountDTO(userAccount)).thenReturn(accountDto);
+        when(this.bankAccountService.findBankAccountDTOByUserMail(anyString())).thenReturn(bankAccountDTO);
 
         this.mockMvc.perform(get("/home"))
                 .andExpect(status().isOk())
