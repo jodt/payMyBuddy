@@ -4,6 +4,7 @@ import com.openclassrooms.payMyBuddy.controller.dto.PaymentDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.UserMapper;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
+import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.service.PaymentService;
 import com.openclassrooms.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;
@@ -36,7 +37,7 @@ public class PaymentController {
 
     @GetMapping("/payment")
     public String getPayments(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                              @RequestParam(name = "size", defaultValue = "3") int size) {
+                              @RequestParam(name = "size", defaultValue = "3") int size) throws UserNotFoundException {
         log.info("GET /payment called");
         UserDTO userDTO = this.userService.getLoggedUserDTO();
         Page<PaymentDTO> paymentDTOS = this.paymentService.getAllPayments(userDTO, page, size);
@@ -51,7 +52,7 @@ public class PaymentController {
 
     @PostMapping("/payment")
     public String makePayment(@Valid @ModelAttribute("payment") PaymentDTO paymentDTO, Errors errors, Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                              @RequestParam(name = "size", defaultValue = "3") int size) {
+                              @RequestParam(name = "size", defaultValue = "3") int size) throws UserNotFoundException {
         log.info("POST /payment called to make a payment");
 
         UserDTO userDTO = this.userService.getLoggedUserDTO();

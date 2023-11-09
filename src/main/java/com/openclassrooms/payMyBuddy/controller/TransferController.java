@@ -4,6 +4,7 @@ import com.openclassrooms.payMyBuddy.controller.dto.BankAccountDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.TransferDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
+import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.service.BankAccountService;
 import com.openclassrooms.payMyBuddy.service.TransferService;
 import com.openclassrooms.payMyBuddy.service.UserService;
@@ -37,7 +38,7 @@ public class TransferController {
 
 
     @PostMapping("/transfer/credit")
-    public String creditAccount(@Valid @ModelAttribute("creditTransfer") TransferDTO transferDTO, Errors errors, Model model) {
+    public String creditAccount(@Valid @ModelAttribute("creditTransfer") TransferDTO transferDTO, Errors errors, Model model) throws UserNotFoundException {
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
 
         if (errors.hasErrors()) {
@@ -51,7 +52,7 @@ public class TransferController {
     }
 
     @PostMapping("/transfer/debit")
-    public String debitAccount(@Valid @ModelAttribute("debitTransfer") TransferDTO transferDTO, Errors errors, Model model) {
+    public String debitAccount(@Valid @ModelAttribute("debitTransfer") TransferDTO transferDTO, Errors errors, Model model) throws UserNotFoundException {
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
 
         if (errors.hasErrors()) {

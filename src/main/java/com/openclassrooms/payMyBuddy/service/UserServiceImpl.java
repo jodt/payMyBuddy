@@ -4,12 +4,15 @@ import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.UserMapper;
 import com.openclassrooms.payMyBuddy.exceptions.AlreadyBuddyExistException;
 import com.openclassrooms.payMyBuddy.exceptions.UserAlreadyExistException;
+import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.AccountRepository;
 import com.openclassrooms.payMyBuddy.repository.UserRepository;
 import com.openclassrooms.payMyBuddy.utils.RandomAccountNumber;
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<User> findAllOtherUsers() {
+    public List<User> findAllOtherUsers() throws UserNotFoundException {
         String loggedUserMail = this.getLoggedUser().getMail();
         log.info("recovery of all users other than the connected user {}", loggedUserMail);
         return this.userRepository.findAll().stream()
@@ -72,20 +75,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getLoggedUser() {
+    public User getLoggedUser() throws UserNotFoundException {
         log.info("try to find logged user");
         String loggedUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.userRepository.findByMail(loggedUserMail).get();
+        return this.userRepository.findByMail(loggedUserMail).orElseThrow(() -> new UserNotFoundException());
     }
 
     @Override
-    public UserDTO getLoggedUserDTO() {
+    public UserDTO getLoggedUserDTO() throws UserNotFoundException {
         log.info("try to retrieve logged userDTO");
         return this.userMapper.asUserDTO(this.getLoggedUser());
     }
 
     @Override
-    public User addBuddy(String buddyMail) throws AlreadyBuddyExistException {
+    public User addBuddy(String buddyMail) throws AlreadyBuddyExistException, UserNotFoundException {
         User user = this.getLoggedUser();
         Optional<User> buddytoAdd = this.userRepository.findByMail(buddyMail);
         if (buddytoAdd.isPresent()) {

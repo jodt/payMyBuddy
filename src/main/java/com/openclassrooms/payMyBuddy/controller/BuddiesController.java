@@ -3,6 +3,7 @@ package com.openclassrooms.payMyBuddy.controller;
 import com.openclassrooms.payMyBuddy.controller.dto.BuddyDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.BuddyMapper;
 import com.openclassrooms.payMyBuddy.exceptions.AlreadyBuddyExistException;
+import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.service.BuddyService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,7 @@ public class BuddiesController {
     }
 
     @GetMapping("/buddies")
-    public String showAddBuddyForm(Model model) {
+    public String showAddBuddyForm(Model model) throws UserNotFoundException {
         List<BuddyDTO> buddiesDTO = this.buddyService.getAllUsersAsBuddyDTO();
         model.addAttribute("users", buddiesDTO);
         model.addAttribute("buddyToAdd", new BuddyDTO());
@@ -35,7 +36,7 @@ public class BuddiesController {
     }
 
     @PostMapping("/buddies")
-    public String addBuddy(@Valid @ModelAttribute("buddyToAdd") BuddyDTO buddyDTO, Errors errors, Model model) {
+    public String addBuddy(@Valid @ModelAttribute("buddyToAdd") BuddyDTO buddyDTO, Errors errors, Model model) throws UserNotFoundException {
 
         if (errors.hasErrors()) {
             List<BuddyDTO> buddiesDTO = this.buddyService.getAllUsersAsBuddyDTO();

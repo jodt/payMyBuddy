@@ -4,6 +4,7 @@ import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.UserMapper;
 import com.openclassrooms.payMyBuddy.exceptions.AlreadyBuddyExistException;
 import com.openclassrooms.payMyBuddy.exceptions.UserAlreadyExistException;
+import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.AccountRepository;
@@ -145,7 +146,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("Should return all users without the logged user")
-    void shouldFindAllOtherUsers() {
+    void shouldFindAllOtherUsers() throws UserNotFoundException {
 
         when(authentication.getName()).thenReturn("john@test.com");
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -168,7 +169,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("Should add a buddy")
-    void shouldAddBuddy() throws AlreadyBuddyExistException {
+    void shouldAddBuddy() throws AlreadyBuddyExistException, UserNotFoundException {
         when(authentication.getName()).thenReturn("john@test.com");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -208,7 +209,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void shouldGetLoggedUser() {
+    void shouldGetLoggedUser() throws UserNotFoundException {
 
         when(authentication.getName()).thenReturn("john@test.com");
         SecurityContextHolder.getContext().setAuthentication(authentication);
