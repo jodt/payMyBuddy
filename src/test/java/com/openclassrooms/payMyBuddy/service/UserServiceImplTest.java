@@ -160,8 +160,8 @@ class UserServiceImplTest {
         assertTrue(!result.contains(user));
         assertTrue(result.contains(user2));
 
-        verify(authentication, times(2)).getName();
-        verify(userRepository, times(2)).findByMail("john@test.com");
+        verify(authentication, times(1)).getName();
+        verify(userRepository, times(1)).findByMail("john@test.com");
         verify(userRepository).findAll();
     }
 
