@@ -74,9 +74,9 @@ public class TransferController {
         try {
             this.transferService.makeDebitTransfer(transferDTO, loggedUser.getMail());
         } catch (InsufficientBalanceException e) {
-            log.info("insufficient balance to make this transfer");
             return ("redirect:../home?debiterror");
         }
+        log.info("End of the debit transfer process");
         return ("redirect:../home?debitsuccess");
     }
 

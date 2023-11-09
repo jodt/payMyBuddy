@@ -82,13 +82,17 @@ public class TransferServiceImpl implements TransferService {
         Optional<Account> account = this.accountService.findAccountByUserMail(mail);
 
         if (account.isPresent()) {
+            log.info("user account recovery");
             userAccount = account.get();
             if (userAccount.getBalance() - amountToWithdraw >= 0) {
                 userAccount.setBalance(userAccount.getBalance() - amountToWithdraw);
+                log.info("account successfully debited in the amount of {}", amountToWithdraw);
             } else {
+                log.error("insufficient balance to make this transfer");
                 throw new InsufficientBalanceException("Solde insuffisant pour effectuer le transfer");
             }
         } else {
+            log.error("user account not found");
             throw new UserAccountNotFoundException();
         }
 
@@ -96,11 +100,13 @@ public class TransferServiceImpl implements TransferService {
         if (bankAccount.isPresent()) {
             userBankAccount = bankAccount.get();
         } else {
+            log.error("user's bank account not found");
             throw new UserBankAccountNotFoundException();
         }
 
         debitTransfer = this.transferMapper.asTransfer(transferDTO, userBankAccount, OperationEnum.DEBIT, userAccount);
 
+        log.info("debit transfer successfully completed");
         return transferRepository.save(debitTransfer);
     }
 
