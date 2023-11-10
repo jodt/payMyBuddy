@@ -3,14 +3,12 @@ package com.openclassrooms.payMyBuddy.service;
 import com.openclassrooms.payMyBuddy.controller.dto.TransferDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.TransferMapper;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
-import com.openclassrooms.payMyBuddy.exceptions.UserAccountNotFoundException;
-import com.openclassrooms.payMyBuddy.exceptions.UserBankAccountNotFoundException;
+import com.openclassrooms.payMyBuddy.exceptions.ResourceNotFoundException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.BankAccount;
 import com.openclassrooms.payMyBuddy.model.OperationEnum;
 import com.openclassrooms.payMyBuddy.model.Transfer;
 import com.openclassrooms.payMyBuddy.repository.TransferRepository;
-import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +36,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Transfer makeCreditTransfer(TransferDTO transferDTO, String mail) throws UserAccountNotFoundException, UserBankAccountNotFoundException {
+    public Transfer makeCreditTransfer(TransferDTO transferDTO, String mail) throws ResourceNotFoundException {
         Account userAccount = null;
         BankAccount userBankAccount = null;
         Transfer creditTransfer;
@@ -53,7 +51,7 @@ public class TransferServiceImpl implements TransferService {
             log.info("account successfully credited in the amount of {}", amountToAdd);
         } else {
             log.error("user account not found");
-            throw new UserAccountNotFoundException();
+            throw new ResourceNotFoundException();
         }
 
         Optional<BankAccount> bankAccount = this.bankAccountService.findBankAccountByUserMail(mail);
@@ -62,7 +60,7 @@ public class TransferServiceImpl implements TransferService {
             userBankAccount = bankAccount.get();
         } else {
             log.error("user's bank account not found");
-            throw new UserBankAccountNotFoundException();
+            throw new ResourceNotFoundException();
         }
 
         creditTransfer = this.transferMapper.asTransfer(transferDTO, userBankAccount, OperationEnum.CREDIT, userAccount);
@@ -72,7 +70,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Transfer makeDebitTransfer(TransferDTO transferDTO, String mail) throws InsufficientBalanceException, UserAccountNotFoundException, UserBankAccountNotFoundException {
+    public Transfer makeDebitTransfer(TransferDTO transferDTO, String mail) throws InsufficientBalanceException, ResourceNotFoundException {
         Account userAccount = null;
         BankAccount userBankAccount = null;
         Transfer debitTransfer;
@@ -93,7 +91,7 @@ public class TransferServiceImpl implements TransferService {
             }
         } else {
             log.error("user account not found");
-            throw new UserAccountNotFoundException();
+            throw new ResourceNotFoundException();
         }
 
         Optional<BankAccount> bankAccount = this.bankAccountService.findBankAccountByUserMail(mail);
@@ -101,7 +99,7 @@ public class TransferServiceImpl implements TransferService {
             userBankAccount = bankAccount.get();
         } else {
             log.error("user's bank account not found");
-            throw new UserBankAccountNotFoundException();
+            throw new ResourceNotFoundException();
         }
 
         debitTransfer = this.transferMapper.asTransfer(transferDTO, userBankAccount, OperationEnum.DEBIT, userAccount);

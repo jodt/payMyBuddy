@@ -3,7 +3,7 @@ package com.openclassrooms.payMyBuddy.service;
 import com.openclassrooms.payMyBuddy.controller.dto.BuddyDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.BuddyMapper;
 import com.openclassrooms.payMyBuddy.exceptions.AlreadyBuddyExistException;
-import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
+import com.openclassrooms.payMyBuddy.exceptions.ResourceNotFoundException;
 import com.openclassrooms.payMyBuddy.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +66,7 @@ class BuddyServiceImplTest {
 
     @Test
     @DisplayName("Should get all users as buddyDTO")
-    void shouldGetAllUsersAsBuddyDTO() throws UserNotFoundException {
+    void shouldGetAllUsersAsBuddyDTO() throws ResourceNotFoundException {
 
         when(this.userService.findAllOtherUsers()).thenReturn(List.of(user2));
         when(this.buddyMapper.asBuddyDTO(user2)).thenReturn(buddyDTO);
@@ -83,7 +83,7 @@ class BuddyServiceImplTest {
 
     @Test
     @DisplayName("Should add buddy")
-    void addBuddy() throws AlreadyBuddyExistException, UserNotFoundException {
+    void addBuddy() throws AlreadyBuddyExistException, ResourceNotFoundException {
 
         user.getBuddies().add(user2);
 

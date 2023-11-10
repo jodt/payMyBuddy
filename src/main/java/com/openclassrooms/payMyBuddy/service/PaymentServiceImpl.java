@@ -4,7 +4,7 @@ import com.openclassrooms.payMyBuddy.controller.dto.PaymentDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.PaymentMapper;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
-import com.openclassrooms.payMyBuddy.exceptions.UserAccountNotFoundException;
+import com.openclassrooms.payMyBuddy.exceptions.ResourceNotFoundException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.Payment;
 import com.openclassrooms.payMyBuddy.repository.PaymentRepository;
@@ -34,10 +34,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException, UserAccountNotFoundException {
+    public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException, ResourceNotFoundException {
         log.info("Start of the process to make a payment");
-        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).orElseThrow(() -> new UserAccountNotFoundException());
-        Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).orElseThrow(() -> new UserAccountNotFoundException());
+        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).orElseThrow(() -> new ResourceNotFoundException());
+        Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).orElseThrow(() -> new ResourceNotFoundException());
 
         double amountPayment = payment.getAmount().doubleValue();
         double charges = this.chargesCalulation(amountPayment);
@@ -61,6 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) {
         log.info("Start of the process to recover all user payments begins");
+        //TODO Handle exception for the option issuerAccount
         Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
         Pageable paging = PageRequest.of(page, size);
         int start = Math.min((int) paging.getOffset(), issuerAccount.getPayments().size());

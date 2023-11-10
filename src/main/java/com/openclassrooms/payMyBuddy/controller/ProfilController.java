@@ -1,12 +1,9 @@
 package com.openclassrooms.payMyBuddy.controller;
 
 import com.openclassrooms.payMyBuddy.controller.dto.BankAccountDTO;
-import com.openclassrooms.payMyBuddy.controller.dto.TransferDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
-import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
-import com.openclassrooms.payMyBuddy.exceptions.UserNotFoundException;
+import com.openclassrooms.payMyBuddy.exceptions.ResourceNotFoundException;
 import com.openclassrooms.payMyBuddy.service.BankAccountService;
-import com.openclassrooms.payMyBuddy.service.TransferService;
 import com.openclassrooms.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +30,7 @@ public class ProfilController {
 
 
     @GetMapping("/profil")
-    public String showProfilePage(Model model) throws UserNotFoundException {
+    public String showProfilePage(Model model) throws ResourceNotFoundException {
         log.info("GET /profil called");
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
         BankAccountDTO userBankAccountDTO = this.bankAccountService.findBankAccountDTOByUserMail(loggedUser.getMail());
@@ -44,7 +41,7 @@ public class ProfilController {
     }
 
     @PostMapping("/profil")
-    public String saveUserBankAccount(@Valid @ModelAttribute("userBankAccount") BankAccountDTO bankAccountDTO, Errors errors) throws UserNotFoundException {
+    public String saveUserBankAccount(@Valid @ModelAttribute("userBankAccount") BankAccountDTO bankAccountDTO, Errors errors) throws ResourceNotFoundException {
         log.info("POST /profil called -> start of the process to create user bank account");
         UserDTO loggedUser = this.userService.getLoggedUserDTO();
         if (errors.hasErrors()) {

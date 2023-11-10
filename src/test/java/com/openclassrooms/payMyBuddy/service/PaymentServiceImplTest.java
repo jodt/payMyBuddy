@@ -4,7 +4,7 @@ import com.openclassrooms.payMyBuddy.controller.dto.PaymentDTO;
 import com.openclassrooms.payMyBuddy.controller.dto.UserDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.PaymentMapper;
 import com.openclassrooms.payMyBuddy.exceptions.InsufficientBalanceException;
-import com.openclassrooms.payMyBuddy.exceptions.UserAccountNotFoundException;
+import com.openclassrooms.payMyBuddy.exceptions.ResourceNotFoundException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.Payment;
 import com.openclassrooms.payMyBuddy.model.User;
@@ -113,7 +113,7 @@ class PaymentServiceImplTest {
 
     @Test
     @DisplayName("Should make payment")
-    void shouldMakePayment() throws InsufficientBalanceException, UserAccountNotFoundException {
+    void shouldMakePayment() throws InsufficientBalanceException, ResourceNotFoundException {
 
         when(this.accountService.findAccountByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
         when(this.accountService.findAccountByUserMail("receiver@gmail.com")).thenReturn(Optional.of(receiverAccount));

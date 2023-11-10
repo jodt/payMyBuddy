@@ -43,6 +43,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccount save(BankAccountDTO bankAccountDTO, String mail) {
+        //TODO handle exception for the optional user
         User user = this.userService.findByMail(mail).get();
         BankAccount userBankAccount = this.bankAccountMapper.asBankAccount(bankAccountDTO, user);
         log.info("User bank account successfully created");
