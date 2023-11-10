@@ -39,7 +39,12 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
+    /**
+     * Method that returns a list of all users except the logged user
+     *
+     * @return a list of users
+     * @throws ResourceNotFoundException
+     */
     @Override
     public List<User> findAllOtherUsers() throws ResourceNotFoundException {
         String loggedUserMail = this.getLoggedUser().getMail();
@@ -49,6 +54,13 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Method that save a user in the database
+     *
+     * @param user
+     * @return the saved user
+     * @throws UserAlreadyExistException
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public User saveUser(UserDTO user) throws UserAlreadyExistException {
@@ -72,6 +84,12 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findByMail(mail);
     }
 
+    /**
+     * Method that returns the logged user
+     *
+     * @return User logged
+     * @throws ResourceNotFoundException
+     */
     @Override
     public User getLoggedUser() throws ResourceNotFoundException {
         log.info("Try to find logged user");
@@ -79,12 +97,26 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findByMail(loggedUserMail).orElseThrow(() -> new ResourceNotFoundException());
     }
 
+    /**
+     * Method that return the logged user as userDTO
+     *
+     * @return UserDTO
+     * @throws ResourceNotFoundException
+     */
     @Override
     public UserDTO getLoggedUserDTO() throws ResourceNotFoundException {
         log.info("Try to retrieve logged userDTO");
         return this.userMapper.asUserDTO(this.getLoggedUser());
     }
 
+    /**
+     * Method that takes a buddy's email and adds that buddy to the logged user's buddies list
+     *
+     * @param buddyMail
+     * @return The logged user whose buddies list was updated
+     * @throws AlreadyBuddyExistException if the buddy already exist in the user's buddies list
+     * @throws ResourceNotFoundException  if the user is not found
+     */
     @Override
     public User addBuddy(String buddyMail) throws AlreadyBuddyExistException, ResourceNotFoundException {
         User user = this.getLoggedUser();
@@ -101,7 +133,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-
+    /**
+     * Method that takes a user and creates the user account with a zero balance
+     * and a unique identifier. This method is used during user registration
+     *
+     * @param userSaved
+     */
     private void createUserAccount(User userSaved) {
         Account userAccount = Account.builder()
                 .number(RandomAccountNumber.createAccountNumber())
@@ -112,6 +149,13 @@ public class UserServiceImpl implements UserService {
         this.accountRepository.save(userAccount);
     }
 
+    /**
+     * Method used to check if a buddy already exists in the user's buddies list
+     *
+     * @param user
+     * @param Buddy
+     * @return return true if the friend already exists in the list otherwise false
+     */
     private boolean checkIfBuddyAlreadyExist(User user, User Buddy) {
         return user.getBuddies().contains(Buddy);
     }

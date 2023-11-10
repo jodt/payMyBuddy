@@ -2,6 +2,7 @@ package com.openclassrooms.payMyBuddy.service;
 
 import com.openclassrooms.payMyBuddy.controller.dto.BankAccountDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.BankAccountMapper;
+import com.openclassrooms.payMyBuddy.exceptions.ResourceNotFoundException;
 import com.openclassrooms.payMyBuddy.model.BankAccount;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.BankAccountRepository;
@@ -26,11 +27,24 @@ public class BankAccountServiceImpl implements BankAccountService {
         this.bankAccountMapper = bankAccountMapper;
     }
 
+
+    /**
+     * Method that takes a mail and return an optional bankAccount
+     *
+     * @param mail
+     * @return optional bank account
+     */
     @Override
     public Optional<BankAccount> findBankAccountByUserMail(String mail) {
         return this.bankAccountRepository.findByUserMail(mail);
     }
 
+    /**
+     * Method that takes a mail and return a bankAccountDto
+     *
+     * @param mail
+     * @return the user bankAccountDto or a new bankAccountDTo
+     */
     @Override
     public BankAccountDTO findBankAccountDTOByUserMail(String mail) {
         Optional<BankAccount> userBankAccount = this.findBankAccountByUserMail(mail);
@@ -42,9 +56,11 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccount save(BankAccountDTO bankAccountDTO, String mail) {
-        //TODO handle exception for the optional user
-        User user = this.userService.findByMail(mail).get();
+    public BankAccount save(BankAccountDTO bankAccountDTO, String mail) throws ResourceNotFoundException {
+        User user = this.userService.findByMail(mail).orElseThrow(() -> {
+            log.error("User not found");
+            return new ResourceNotFoundException();
+        });
         BankAccount userBankAccount = this.bankAccountMapper.asBankAccount(bankAccountDTO, user);
         log.info("User bank account successfully created");
         return this.bankAccountRepository.save(userBankAccount);

@@ -32,6 +32,16 @@ public class PaymentServiceImpl implements PaymentService {
         this.paymentRepository = paymentRepository;
     }
 
+    /**
+     * Method that takes a paymentDTO, debits the issuer account balance for the payment amount,
+     * credits the payee account balance for the payment amount, and records the payment in the database
+     *
+     * @param payment
+     * @param issuerUser
+     * @return
+     * @throws InsufficientBalanceException
+     * @throws ResourceNotFoundException
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException, ResourceNotFoundException {
@@ -58,11 +68,23 @@ public class PaymentServiceImpl implements PaymentService {
         return this.paymentRepository.save(successPayment);
     }
 
+    /**
+     * Method Method that retrieves all payments issued by a user.
+     * Payments are returned as a page with a defined number of payments per page
+     *
+     * @param issuerUser
+     * @param page
+     * @param size
+     * @return payments as paymentsDTO from the indicated page containing the number of payments requested
+     * @throws ResourceNotFoundException
+     */
     @Override
-    public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) {
+    public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) throws ResourceNotFoundException {
         log.info("Start of the process to recover all user payments begins");
-        //TODO Handle exception for the option issuerAccount
-        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).get();
+        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).orElseThrow(() -> {
+            log.error("Issuer user account not found");
+            return new ResourceNotFoundException();
+        });
         Pageable paging = PageRequest.of(page, size);
         int start = Math.min((int) paging.getOffset(), issuerAccount.getPayments().size());
         int end = Math.min((start + paging.getPageSize()), issuerAccount.getPayments().size());
@@ -73,10 +95,25 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentDTOS;
     }
 
+    /**
+     * Method that takes an amount and returns the amount of charges
+     * for this amount (here 0.05%)
+     *
+     * @param amount
+     * @return the amount of charges
+     */
     private double chargesCalulation(double amount) {
         return amount * 5 / 100;
     }
 
+    /**
+     * Method use to check if there is sufficient credit balance
+     * to make payment
+     *
+     * @param balance
+     * @param payment
+     * @return true if balance is sufficient or false
+     */
     private boolean isBalanceSufficient(double balance, double payment) {
         return balance - payment >= 0;
     }

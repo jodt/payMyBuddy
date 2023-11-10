@@ -11,6 +11,6 @@ public interface PaymentService {
 
     public Payment makePayment(PaymentDTO paymentDTO, UserDTO userDTO) throws InsufficientBalanceException, ResourceNotFoundException;
 
-    public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size);
+    public Page<PaymentDTO> getAllPayments(UserDTO issuerUser, int page, int size) throws ResourceNotFoundException;
 
 }

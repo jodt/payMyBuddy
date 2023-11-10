@@ -22,12 +22,24 @@ public class AccountServiceImpl implements AccountService {
         this.accountMapper = accountMapper;
     }
 
+    /**
+     * Method that takes a mail and return an optional account
+     *
+     * @param mail
+     * @return optional account
+     */
     @Override
     public Optional<Account> findAccountByUserMail(String mail) {
         log.info("Try to find the account for the mail {}", mail);
         return this.accountRepository.findByUserMail(mail);
     }
 
+    /**
+     * Method that takes a mail and return an accountDto or null
+     *
+     * @param mail
+     * @return an accountDto or null optional is empty
+     */
     public AccountDTO findAccountDtoByUserMail(String mail) {
         log.info("Try to find the accountDTO for the email {}", mail);
         Optional<AccountDTO> userAccountDTO = this.findAccountByUserMail(mail).map(account -> this.accountMapper.asAccountDTO(account));

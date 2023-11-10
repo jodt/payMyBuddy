@@ -1,6 +1,7 @@
 package com.openclassrooms.payMyBuddy.service;
 
 import com.openclassrooms.payMyBuddy.controller.dto.BankAccountDTO;
+import com.openclassrooms.payMyBuddy.exceptions.ResourceNotFoundException;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.BankAccount;
 
@@ -12,6 +13,6 @@ public interface BankAccountService {
 
     public BankAccountDTO findBankAccountDTOByUserMail(String mail);
 
-    BankAccount save(BankAccountDTO bankAccountDTO, String mail);
+    BankAccount save(BankAccountDTO bankAccountDTO, String mail) throws ResourceNotFoundException;
 
 }

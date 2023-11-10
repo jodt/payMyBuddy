@@ -35,6 +35,15 @@ public class TransferServiceImpl implements TransferService {
         this.transferRepository = transferRepository;
     }
 
+    /**
+     * Method that takes a transferDTO, credits the user account balance
+     * with the transfer amount, and saves the transfer in the database
+     *
+     * @param transferDTO
+     * @param mail
+     * @return the saved transfer
+     * @throws ResourceNotFoundException
+     */
     @Transactional(rollbackFor = Exception.class)
     public Transfer makeCreditTransfer(TransferDTO transferDTO, String mail) throws ResourceNotFoundException {
         Account userAccount = null;
@@ -69,6 +78,16 @@ public class TransferServiceImpl implements TransferService {
         return transferRepository.save(creditTransfer);
     }
 
+    /**
+     * Method that takes a transferDTO, debits the user account balance
+     * with the transfer amount, and saves the transfer in the database
+     *
+     * @param transferDTO
+     * @param mail
+     * @return
+     * @throws InsufficientBalanceException
+     * @throws ResourceNotFoundException
+     */
     @Transactional(rollbackFor = Exception.class)
     public Transfer makeDebitTransfer(TransferDTO transferDTO, String mail) throws InsufficientBalanceException, ResourceNotFoundException {
         Account userAccount = null;

@@ -167,7 +167,7 @@ class PaymentServiceImplTest {
 
     @Test
     @DisplayName("Should get all payments")
-    void shouldGetAllPayments() {
+    void shouldGetAllPayments() throws ResourceNotFoundException {
 
         when(this.accountService.findAccountByUserMail("john@test.com")).thenReturn(Optional.of(issuerAccount));
         when(this.paymentMapper.asPaymentDTO(payment, payment.getReceiverAccount())).thenReturn(paymentDTO);
