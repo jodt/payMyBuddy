@@ -23,12 +23,26 @@ public class BuddyServiceImpl implements BuddyService {
         this.buddyMapper = buddyMapper;
     }
 
+    /**
+     * Method that retrieves all users except the user logged in as BuddyDTO
+     *
+     * @return a list of buddyDTO
+     * @throws ResourceNotFoundException
+     */
     public List<BuddyDTO> getAllUsersAsBuddyDTO() throws ResourceNotFoundException {
         return this.userService.findAllOtherUsers().stream()
                 .map(user -> this.buddyMapper.asBuddyDTO(user))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Method that takes a buddy's email and adds that buddy to the logged user's buddies list
+     *
+     * @param mail
+     * @return The logged user whose buddies list was updated
+     * @throws AlreadyBuddyExistException
+     * @throws ResourceNotFoundException
+     */
     public User addBuddy(String mail) throws AlreadyBuddyExistException, ResourceNotFoundException {
         return this.userService.addBuddy(mail);
     }
