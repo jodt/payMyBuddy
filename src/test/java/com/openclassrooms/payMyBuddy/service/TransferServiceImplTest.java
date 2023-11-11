@@ -108,6 +108,40 @@ class TransferServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should not make transfer -> user account not found")
+    void shouldNotMakeCreditTransferUserAccountNotFound() {
+
+        when(this.accountService.findAccountByUserMail(user.getMail())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> this.transferService.makeCreditTransfer(transferDTO, user.getMail()));
+
+        assertEquals(500, account.getBalance());
+
+        verify(accountService).findAccountByUserMail(user.getMail());
+        verify(bankAccountService, never()).findBankAccountByUserMail(user.getMail());
+        verify(transferMapper, never()).asTransfer(transferDTO, bankAccount, OperationEnum.CREDIT, account);
+        verify(transferRepository, never()).save(transfer);
+
+    }
+
+    @Test
+    @DisplayName("Should not make transfer -> user bank account not found")
+    void shouldNotMakeCreditTransferUserBankAccountNotFound() throws ResourceNotFoundException {
+
+        when(this.accountService.findAccountByUserMail(user.getMail())).thenReturn(Optional.of(account));
+        when(this.bankAccountService.findBankAccountByUserMail(user.getMail())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> this.transferService.makeCreditTransfer(transferDTO, user.getMail()));
+        assertEquals(500 + transfer.getAmount(), account.getBalance());
+
+        verify(accountService).findAccountByUserMail(user.getMail());
+        verify(bankAccountService).findBankAccountByUserMail(user.getMail());
+        verify(transferMapper, never()).asTransfer(transferDTO, bankAccount, OperationEnum.CREDIT, account);
+        verify(transferRepository, never()).save(transfer);
+
+    }
+
+    @Test
     @DisplayName("Should make a debit transfer and debit account")
     void shouldMakeDebitTransfer() throws InsufficientBalanceException, ResourceNotFoundException {
 
@@ -144,6 +178,41 @@ class TransferServiceImplTest {
 
         verify(accountService).findAccountByUserMail(user.getMail());
         verify(bankAccountService, never()).findBankAccountByUserMail(any());
+        verify(transferMapper, never()).asTransfer(any(), any(), any(), any());
+        verify(transferRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should not make a debit transfer -> user account not found")
+    void shouldNotMakeDebitTransferUserAccountNotFound() {
+
+        when(this.accountService.findAccountByUserMail(user.getMail())).thenReturn(Optional.empty());
+
+
+        assertThrows(ResourceNotFoundException.class, () -> this.transferService.makeDebitTransfer(transferDTO, user.getMail()));
+
+
+        assertEquals(500, account.getBalance());
+
+        verify(accountService).findAccountByUserMail(user.getMail());
+        verify(bankAccountService, never()).findBankAccountByUserMail(any());
+        verify(transferMapper, never()).asTransfer(any(), any(), any(), any());
+        verify(transferRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should not make a debit transfer -> user bank account not found")
+    void shouldNotMakeDebitTransferUserBankAccountNotFound() {
+
+        when(this.accountService.findAccountByUserMail(user.getMail())).thenReturn(Optional.of(account));
+        when(this.bankAccountService.findBankAccountByUserMail(user.getMail())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> this.transferService.makeDebitTransfer(transferDTO, user.getMail()));
+
+        assertEquals(500 - transfer.getAmount(), account.getBalance());
+
+        verify(accountService).findAccountByUserMail(user.getMail());
+        verify(bankAccountService).findBankAccountByUserMail(user.getMail());
         verify(transferMapper, never()).asTransfer(any(), any(), any(), any());
         verify(transferRepository, never()).save(any());
     }

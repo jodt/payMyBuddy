@@ -2,6 +2,7 @@ package com.openclassrooms.payMyBuddy.service;
 
 import com.openclassrooms.payMyBuddy.controller.dto.BankAccountDTO;
 import com.openclassrooms.payMyBuddy.controller.mapper.BankAccountMapper;
+import com.openclassrooms.payMyBuddy.exceptions.ResourceNotFoundException;
 import com.openclassrooms.payMyBuddy.model.BankAccount;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.BankAccountRepository;
@@ -17,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BankAccountServiceImplTest {
@@ -94,7 +95,34 @@ class BankAccountServiceImplTest {
     }
 
     @Test
-    void save() {
+    @DisplayName("Should save a bank account")
+    void shouldSave() throws ResourceNotFoundException {
+
+        when(this.userService.findByMail("john@test.com")).thenReturn(Optional.of(user));
+        when(this.bankAccountMapper.asBankAccount(bankAccountDTO, user)).thenReturn(bankAccount);
+        when(this.bankAccountRepository.save(bankAccount)).thenReturn(bankAccount);
+
+        BankAccount result = this.bankAccountService.save(bankAccountDTO, "john@test.com");
+
+        assertNotNull(result);
+        assertEquals(bankAccount, result);
+
+        verify(userService).findByMail("john@test.com");
+        verify(bankAccountMapper).asBankAccount(bankAccountDTO, user);
+        verify(bankAccountRepository).save(bankAccount);
+    }
+
+    @Test
+    @DisplayName("Should not save a bank account -> ResourceNotFoundException")
+    void shouldNotSave() {
+
+        when(this.userService.findByMail("john@test.com")).thenReturn(Optional.empty());
+        
+        assertThrows(ResourceNotFoundException.class, () -> this.bankAccountService.save(bankAccountDTO, "john@test.com"));
+
+        verify(userService).findByMail("john@test.com");
+        verify(bankAccountMapper, never()).asBankAccount(bankAccountDTO, user);
+        verify(bankAccountRepository, never()).save(bankAccount);
     }
 
 }

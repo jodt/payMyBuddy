@@ -1,5 +1,7 @@
 package com.openclassrooms.payMyBuddy.service;
 
+import com.openclassrooms.payMyBuddy.controller.dto.AccountDTO;
+import com.openclassrooms.payMyBuddy.controller.mapper.AccountMapper;
 import com.openclassrooms.payMyBuddy.model.Account;
 import com.openclassrooms.payMyBuddy.model.User;
 import com.openclassrooms.payMyBuddy.repository.AccountRepository;
@@ -11,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -23,10 +26,15 @@ class AccountServiceImplTest {
 
     private Account userAccount;
 
+    private AccountDTO userAccountDTO;
+
     private User user;
 
     @Mock
     AccountRepository accountRepository;
+
+    @Mock
+    AccountMapper accountMapper;
 
     @InjectMocks
     AccountServiceImpl accountService;
@@ -47,11 +55,15 @@ class AccountServiceImplTest {
                 .balance(500)
                 .number("123456789")
                 .build();
+
+        userAccountDTO = AccountDTO.builder()
+                .balance(new BigDecimal(500))
+                .build();
     }
 
     @Test
     @DisplayName("Should find account by user mail")
-    void ShouldFindByUserMail() {
+    void ShouldFindAccountByUserMail() {
 
         when(this.accountRepository.findByUserMail("john@test.com")).thenReturn(Optional.ofNullable(userAccount));
 
@@ -62,8 +74,22 @@ class AccountServiceImplTest {
         assertEquals(userAccount, result.get());
 
         verify(accountRepository).findByUserMail("john@test.com");
+    }
 
+    @Test
+    @DisplayName("Should find accountDTO by user mail")
+    void ShouldFindAccountDtoByUserMail() {
 
+        when(this.accountRepository.findByUserMail("john@test.com")).thenReturn(Optional.ofNullable(userAccount));
+        when(this.accountMapper.asAccountDTO(userAccount)).thenReturn(userAccountDTO);
+
+        AccountDTO result = this.accountService.findAccountDtoByUserMail("john@test.com");
+
+        assertNotNull(result);
+        assertEquals(userAccountDTO, result);
+
+        verify(accountRepository).findByUserMail("john@test.com");
+        verify(accountMapper).asAccountDTO(userAccount);
     }
 
     @Test
