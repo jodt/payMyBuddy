@@ -9,6 +9,7 @@
     <meta charset="UTF-8"/>
     <title>Payment</title>
 </head>
+<body>
 <section class="container-sm d-flex flex-column vh-100" style="height:100%;" layout:fragment="content">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -53,7 +54,7 @@
         <div class="alert alert-danger w-75 mt-2" role="alert" th:if="${param.ibanError}">
             Veuillez renseigner votre iban (compris en 6 et 20 caractères)
         </div>
-
     </div>
 </section>
+</body>
 </html>
