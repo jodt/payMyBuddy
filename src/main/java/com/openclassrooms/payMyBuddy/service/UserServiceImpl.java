@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
         if (existingUser.isPresent()) {
             log.error("User already exist in the database");
-            throw new UserAlreadyExistException("Un compte est déjà associé à cet email");
+            throw new UserAlreadyExistException();
         }
 
         User userToSave = userMapper.asUser(user);
