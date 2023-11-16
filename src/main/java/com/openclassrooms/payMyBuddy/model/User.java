@@ -29,7 +29,7 @@ public class User {
 
 
     @ManyToMany(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.MERGE,
                     CascadeType.PERSIST
