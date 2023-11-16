@@ -30,7 +30,7 @@ public class Account {
 
     @OneToMany(
             orphanRemoval = true,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "account"
     )
     private List<Transfer> transfer;
