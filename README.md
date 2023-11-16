@@ -43,7 +43,8 @@ SOURCE /path_of_the_file
 * Open the project in your IDE. Open the application.properties file and edit the following lines:
 
 ```
-spring.datasource.url=jdbc:mysql://localhost:3306/paymybuddy?serverTimezone=UTC (change the mysql port if it's not 3306)
+spring.datasource.url=jdbc:mysql://localhost:3306/paymybuddy?serverTimezone=UTC 
+(change the mysql port if it's not 3306)
 spring.datasource.username="put your username here" 
 spring.datasource.password="put your password here"
 ```
