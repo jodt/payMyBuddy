@@ -57,7 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
             issuerAccount.setBalance(issuerAccount.getBalance() - amountWithCharges);
         } else {
             log.error("Insufficient balance to make payment");
-            throw new InsufficientBalanceException("Solde insuffisant pour effectuer le paiement");
+            throw new InsufficientBalanceException();
         }
         receiverAccount.setBalance(receiverAccount.getBalance() + amountPayment);
 

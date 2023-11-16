@@ -106,7 +106,7 @@ public class TransferServiceImpl implements TransferService {
                 log.info("account successfully debited in the amount of {}", amountToWithdraw);
             } else {
                 log.error("insufficient balance to make this transfer");
-                throw new InsufficientBalanceException("Solde insuffisant pour effectuer le transfer");
+                throw new InsufficientBalanceException();
             }
         } else {
             log.error("user account not found");
