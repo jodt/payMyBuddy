@@ -64,10 +64,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public User saveUser(UserDTO user) throws UserAlreadyExistException {
+        log.info("Try to create a new user");
 
         Optional<User> existingUser = this.userRepository.findByMail(user.getMail());
 
         if (existingUser.isPresent()) {
+            log.error("User already exist in the database");
             throw new UserAlreadyExistException("Un compte est déjà associé à cet email");
         }
 
@@ -76,6 +78,7 @@ public class UserServiceImpl implements UserService {
         User userSaved = this.userRepository.save(userToSave);
 
         this.createUserAccount(userSaved);
+        log.info("User successfully created");
         return userSaved;
     }
 
