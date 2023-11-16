@@ -122,6 +122,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User addBuddy(String buddyMail) throws AlreadyBuddyExistException, ResourceNotFoundException {
+        log.info("Try to add a new buddy");
         User user = this.getLoggedUser();
         Optional<User> buddytoAdd = this.userRepository.findByMail(buddyMail);
         if (buddytoAdd.isPresent()) {
