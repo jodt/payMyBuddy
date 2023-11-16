@@ -33,43 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Method that takes a paymentDTO, debits the issuer account balance for the payment amount,
-     * credits the payee account balance for the payment amount, and records the payment in the database
-     *
-     * @param payment
-     * @param issuerUser
-     * @return
-     * @throws InsufficientBalanceException
-     * @throws ResourceNotFoundException
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException, ResourceNotFoundException {
-        log.info("Start of the process to make a payment");
-        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).orElseThrow(() -> new ResourceNotFoundException());
-        Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).orElseThrow(() -> new ResourceNotFoundException());
-
-        double amountPayment = payment.getAmount().doubleValue();
-        double charges = this.chargesCalulation(amountPayment);
-        double amountWithCharges = amountPayment + charges;
-
-        if (isBalanceSufficient(issuerAccount.getBalance(), amountWithCharges)) {
-            issuerAccount.setBalance(issuerAccount.getBalance() - amountWithCharges);
-        } else {
-            log.error("Insufficient balance to make payment");
-            throw new InsufficientBalanceException();
-        }
-        receiverAccount.setBalance(receiverAccount.getBalance() + amountPayment);
-
-        this.accountService.saveAccount(issuerAccount);
-        this.accountService.saveAccount(receiverAccount);
-
-        Payment successPayment = paymentMapper.asPayment(payment, issuerAccount, receiverAccount);
-        return this.paymentRepository.save(successPayment);
-    }
-
-    /**
-     * Method Method that retrieves all payments issued by a user.
+     * Method that retrieves all payments issued by a user.
      * Payments are returned as a page with a defined number of payments per page
      *
      * @param issuerUser
@@ -96,14 +60,35 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Method that takes an amount and returns the amount of charges
-     * for this amount (here 0.05%)
+     * Method that takes a paymentDTO, debits the issuer account balance for the payment amount,
+     * credits the payee account balance for the payment amount, and records the payment in the database
      *
-     * @param amount
-     * @return the amount of charges
+     * @param payment
+     * @param issuerUser
+     * @return
+     * @throws InsufficientBalanceException
+     * @throws ResourceNotFoundException
      */
-    private double chargesCalulation(double amount) {
-        return amount * 5 / 100;
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Payment makePayment(PaymentDTO payment, UserDTO issuerUser) throws InsufficientBalanceException, ResourceNotFoundException {
+        log.info("Start of the process to make a payment");
+        Account issuerAccount = this.accountService.findAccountByUserMail(issuerUser.getMail()).orElseThrow(() -> new ResourceNotFoundException());
+        Account receiverAccount = this.accountService.findAccountByUserMail(payment.getReceiverMail()).orElseThrow(() -> new ResourceNotFoundException());
+
+        double amountPayment = payment.getAmount().doubleValue();
+        double amountWithCharges = calculateAmountWithCharges(amountPayment);
+
+        if (isBalanceSufficient(issuerAccount.getBalance(), amountWithCharges)) {
+            issuerAccount.setBalance(issuerAccount.getBalance() - amountWithCharges);
+        } else {
+            log.error("Insufficient balance to make payment");
+            throw new InsufficientBalanceException();
+        }
+        receiverAccount.setBalance(receiverAccount.getBalance() + amountPayment);
+
+        Payment successPayment = paymentMapper.asPayment(payment, issuerAccount, receiverAccount);
+        return this.paymentRepository.save(successPayment);
     }
 
     /**
@@ -116,6 +101,29 @@ public class PaymentServiceImpl implements PaymentService {
      */
     private boolean isBalanceSufficient(double balance, double payment) {
         return balance - payment >= 0;
+    }
+
+    /**
+     * Method used to define the total amount including charges
+     *
+     * @param amountPayment
+     * @return payment amount including charges
+     */
+    private double calculateAmountWithCharges(double amountPayment) {
+        double charges = this.chargesCalulation(amountPayment);
+        double amountWithCharges = amountPayment + charges;
+        return amountWithCharges;
+    }
+
+    /**
+     * Method that takes an amount and returns the amount of charges
+     * for this amount (here 0.05%)
+     *
+     * @param amount
+     * @return the amount of charges
+     */
+    private double chargesCalulation(double amount) {
+        return amount * 5 / 100;
     }
 
 }

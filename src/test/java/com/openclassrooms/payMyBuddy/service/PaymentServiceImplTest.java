@@ -121,9 +121,6 @@ class PaymentServiceImplTest {
         when(this.paymentMapper.asPayment(paymentDTO, issuerAccount, receiverAccount)).thenReturn(payment);
         when(this.paymentRepository.save(payment)).thenReturn(payment);
 
-        when(accountService.saveAccount(issuerAccount)).thenReturn(issuerAccount);
-        when(accountService.saveAccount(receiverAccount)).thenReturn(receiverAccount);
-
         Payment result = this.paymentService.makePayment(paymentDTO, userDTO);
 
         assertEquals((500 - 100 - (100 * 0.05)), issuerAccount.getBalance());
@@ -135,8 +132,6 @@ class PaymentServiceImplTest {
         verify(accountService).findAccountByUserMail("receiver@gmail.com");
         verify(paymentMapper).asPayment(paymentDTO, issuerAccount, receiverAccount);
         verify(paymentRepository).save(payment);
-        verify(accountService).saveAccount(issuerAccount);
-        verify(accountService).saveAccount(receiverAccount);
 
     }
 
