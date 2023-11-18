@@ -23,7 +23,7 @@ public class PaymentDTO {
     @DecimalMin(value = "1.00", inclusive = false)
     private BigDecimal amount;
 
-    @NotEmpty
+    //@NotEmpty
     private String description;
 
 
