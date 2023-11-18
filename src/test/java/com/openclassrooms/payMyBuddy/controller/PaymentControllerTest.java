@@ -169,6 +169,7 @@ class PaymentControllerTest {
                         .flashAttr("payment", errorPayment))
                 .andExpect(status().isOk())
                 .andExpect(view().name("payment"))
+                .andExpect(model().attributeHasFieldErrors("payment", "receiverMail"))
                 .andExpect(model().attribute("payments", hasSize(1)))
                 .andExpect(model().attribute("pages", new int[1]))
                 .andExpect(model().attribute("currentPage", 0));
