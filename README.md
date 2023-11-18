@@ -51,6 +51,14 @@ spring.datasource.password="put your password here"
 
 ### Run the project and have fun
 
+## UML Diagram
+
+![alt text](src/main/resources/static/assets/uml.png)
+
+## Logical Data Model
+
+![alt text](src/main/resources/static/assets/mld.png)
+
 ## Preview
 
 * Login Page :
