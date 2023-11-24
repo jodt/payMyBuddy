@@ -26,6 +26,7 @@ public class RegisterController {
     public String showRegisterForm(Model model) {
         log.info("GET /register called");
         model.addAttribute("user", new UserDTO());
+        log.info("Register page displayed");
         return ("register");
     }
 
