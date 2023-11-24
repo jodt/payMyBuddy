@@ -55,9 +55,9 @@ spring.datasource.password="put your password here"
 
 ![alt text](src/main/resources/static/assets/uml.png)
 
-## Logical Data Model
+## Physical Data Model
 
-![alt text](src/main/resources/static/assets/mld.png)
+![alt text](src/main/resources/static/assets/mpd.png)
 
 ## Preview
 
