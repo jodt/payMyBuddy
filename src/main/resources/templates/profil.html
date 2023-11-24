@@ -25,13 +25,13 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" th:text="'Nom : ' +  ${loggedUser.lastname}"></li>
                 <li class="list-group-item" th:text="'Prénom : ' +  ${loggedUser.firstname}"></li>
-                <li class="list-group-item" th:text="'Mail : ' +  ${loggedUser.mail}">>Vestibulum at eros</li>
+                <li class="list-group-item" th:text="'Mail : ' +  ${loggedUser.mail}"></li>
             </ul>
         </div>
 
         <div class="card w-75 mt-5">
             <h3 class="card-header">
-                Mon releve d'identite bancaire
+                Mon relevé d'identite bancaire
             </h3>
             <div th:if="${userBankAccount.getIban()}" th:text="${userBankAccount.getIban()}"
                  class="card-body"></div>
